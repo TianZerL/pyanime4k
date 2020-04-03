@@ -1,0 +1,1 @@
+include pyanime4k/anime4k/*.pyd pyanime4k/anime4k/*.dll pyanime4k/anime4k/*.so
