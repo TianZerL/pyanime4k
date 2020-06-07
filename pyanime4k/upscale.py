@@ -124,7 +124,7 @@ def upscale_images(input_paths: list, output_suffix="_output", output_path=None,
         anime4k_object.saveImage(str(output_file_path))
 
 
-def upscale_video(input_paths: list, output_suffix="_output", output_path=None, *args):
+def upscale_videos(input_paths: list, output_suffix="_output", output_path=None, *args):
     """ upscale a list of video files with Anime4k
 
     Args:
