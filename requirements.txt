@@ -1,1 +1,1 @@
-ffmpy3>=0.2.3
+python-ffmpeg >= 1.0.11
