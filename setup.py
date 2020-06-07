@@ -1,4 +1,5 @@
-import setuptools, platform
+import platform
+import setuptools
 
 system = platform.system()
 if system == "Linux":

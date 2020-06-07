@@ -1,5 +1,8 @@
-from pyanime4k.anime4k.anime4kcpp import Anime4K
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+
 from pyanime4k import ffmpeg
+from pyanime4k.anime4k.anime4kcpp import Anime4K
 import os
 
 
@@ -7,13 +10,13 @@ def showImg2X(src, *args):
     r"""Quickly show a image which be processed by anime4k
     :param src: Path of input file.
     :param args: If you want to specify the prcessing arguments, put it here.
-    
+
     Default args:
-    int passes=2, double strengthColor=0.3, double strengthGradient=1.0, 
-    double zoomFactor=2.0, bool fastMode=False, bool videoMode=False(do not change it), 
-    unsigned int maxThreads=std::thread::hardware_concurrency()) 
+    int passes=2, double strengthColor=0.3, double strengthGradient=1.0,
+    double zoomFactor=2.0, bool fastMode=False, bool videoMode=False(do not change it),
+    unsigned int maxThreads=std::thread::hardware_concurrency())
     """
-    
+
     tmpImg = Anime4K(*args)
     tmpImg.loadImage(src)
     tmpImg.process()
@@ -26,11 +29,11 @@ def cvtImg2X(srcList, dstSuffix="_output", dstPath=None, *args):
     :param dstSuffix: Add a suffix of output files.
     :param dstPath: Specify a path for output files, should be str.
     :param args: If you want to specify the prcessing arguments, put it here.
-    
+
     Default args:
-    int passes=2, double strengthColor=0.3, double strengthGradient=1.0, 
-    double zoomFactor=2.0, bool fastMode=False, bool videoMode=False(do not change it), 
-    unsigned int maxThreads=std::thread::hardware_concurrency()) 
+    int passes=2, double strengthColor=0.3, double strengthGradient=1.0,
+    double zoomFactor=2.0, bool fastMode=False, bool videoMode=False(do not change it),
+    unsigned int maxThreads=std::thread::hardware_concurrency())
     """
 
     if isinstance(srcList, str):
@@ -56,11 +59,11 @@ def cvtVideo2X(srcList, dstSuffix="_output", dstPath=None, *args):
     :param dstSuffix: Add a suffix of output files.
     :param dstPath: Specify a path for output files, should be str.
     args: If you want to specify the prcessing arguments, put it here.
-    
+
     Default args:
-    int passes=1, double strengthColor=0.3, double strengthGradient=1.0, 
-    double zoomFactor=2.0, bool fastMode=False, bool videoMode=True(do not change it), 
-    unsigned int maxThreads=std::thread::hardware_concurrency()) 
+    int passes=1, double strengthColor=0.3, double strengthGradient=1.0,
+    double zoomFactor=2.0, bool fastMode=False, bool videoMode=True(do not change it),
+    unsigned int maxThreads=std::thread::hardware_concurrency())
     """
 
     if isinstance(srcList, str):
