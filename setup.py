@@ -1,4 +1,13 @@
-import setuptools, platform
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+"""
+Name: PyAnime4K pip setup file
+Author: TianZerL
+Editor: K4YT3X
+"""
+
+import platform
+import setuptools
 
 system = platform.system()
 if system == "Linux":
