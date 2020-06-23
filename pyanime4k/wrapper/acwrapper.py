@@ -12,8 +12,8 @@ import platform
 
 acdll={
     "Windows":"ac.dll",
-    "Linux":"ac.so",
-    "MacOS":"ac.dll",
+    "Linux":"libac.so",
+    "MacOS":"libac.dylib",
 }
 
 curr_path = os.path.dirname(os.path.abspath(__file__))

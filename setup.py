@@ -12,8 +12,10 @@ import setuptools
 system = platform.system()
 if system == "Linux":
     lib = {"": ["*.so"]}
-if system == "Windows":
+elif system == "Windows":
     lib = {"": ["*.dll"]}
+else:
+    lib = {"": ["*.dylib"]}
 
 
 with open("README.md", "r") as f:
@@ -21,7 +23,7 @@ with open("README.md", "r") as f:
 
 setuptools.setup(
     name="pyanime4k",
-    version="1.0.1",
+    version="2.2.1",
     author="TianZer",
     description="An easy way to use anime4kcpp in python",
     long_description=long_description,
