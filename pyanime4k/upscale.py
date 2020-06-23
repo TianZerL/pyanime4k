@@ -3,17 +3,20 @@
 """
 Name: PyAnime4K upscaler
 Author: TianZerL
-Editor: K4YT3X
+Editor: K4YT3X, TianZerL
 """
 
 # local imports
 from pyanime4k import ffmpeg_handler
-from pyanime4k.anime4k.anime4kcpp import Anime4K
+from pyanime4k.ac import AC
+from pyanime4k.ac import Parameters
+from pyanime4k.ac import Codec
+from pyanime4k.ac import ProcessorType
 
 # built-in imports
 import contextlib
 import pathlib
-import shutil
+import os
 import tempfile
 
 
@@ -53,41 +56,46 @@ def _sanitize_input_paths(input_paths):
     return sanitized_list
 
 
-def show_upscaled_image(source_path: pathlib.Path, *args):
-    """ display an image processed by Anime4K
-
+def show_upscaled_image(source_path: pathlib.Path,parameters :Parameters = Parameters() ,GPU_mode: bool = False, ACNet :bool = True):
+    """ display an image processed by Anime4K09 or ACNet
     Args:
-        input_path (pathlib.Path): path of input image
-        args: custom arguments passed to Anime4K
+        source_path: input file path.
+        parameters (Parameters, optional): custom arguments passed to Anime4KCPP.
+        GPU_mode (bool, optional): enable GPU mode. Defaults to False.
+        ACNet (bool, optional): enable ACNet mode. Defaults to True.
 
-    Default args:
-    int passes=2, double strengthColor=0.3, double strengthGradient=1.0,
-    double zoomFactor=2.0, bool fastMode=False, bool videoMode=False(do not change it),
-    unsigned int maxThreads=std::thread::hardware_concurrency())
+    Raises:
+        ACError
     """
+    if GPU_mode:
+        if ACNet:
+            ac_object = AC(False, True, type=ProcessorType.GPUCNN, parameters = parameters)
+        else:
+            ac_object = AC(True, False, type=ProcessorType.GPU, parameters = parameters)
+    else:
+        if ACNet:
+            ac_object = AC(False, False, type=ProcessorType.CPUCNN, parameters = parameters)
+        else:
+            ac_object = AC(False, False, type=ProcessorType.CPU, parameters = parameters)
+    ac_object.load_image(str(source_path))
+    ac_object.process()
+    ac_object.show_image()
 
-    anime4k_object = Anime4K(*args)
-    anime4k_object.loadImage(source_path)
-    anime4k_object.process()
-    anime4k_object.showImage()
 
-
-def upscale_images(input_paths: list, output_suffix: str = "_output", output_path: pathlib.Path = None, *args):
+def upscale_images(input_paths: list, output_suffix: str = "_output", output_path: pathlib.Path = None, parameters :Parameters = Parameters() ,GPU_mode: bool = False, ACNet :bool = True):
     """ upscale a list of image files with Anime4K
 
     Args:
         input_paths (list): list of input file paths
         output_suffix (str, optional): output files. Defaults to "_output".
         output_path (pathlib.Path, optional): parent directory of output paths. Defaults to None.
-        args: custom arguments passed to Anime4K
-
-    Default args:
-    int passes=2, double strengthColor=0.3, double strengthGradient=1.0,
-    double zoomFactor=2.0, bool fastMode=False, bool videoMode=False(do not change it),
-    unsigned int maxThreads=std::thread::hardware_concurrency())
+        parameters (Parameters, optional): custom arguments passed to Anime4KCPP.
+        GPU_mode (bool, optional): enable GPU mode. Defaults to False.
+        ACNet (bool, optional): enable ACNet mode. Defaults to True.
 
     Raises:
         FileExistsError: when output path exists and isn't a directory
+        ACError
     """
 
     # sanitize input list
@@ -109,37 +117,44 @@ def upscale_images(input_paths: list, output_suffix: str = "_output", output_pat
         raise FileExistsError('destination path already exists and isn\'t a directory')
 
     # create Anime4K object
-    anime4k_object = Anime4K(*args)
-
+    if GPU_mode:
+        if ACNet:
+            ac_object = AC(False, True, type=ProcessorType.GPUCNN, parameters = parameters)
+        else:
+            ac_object = AC(True, False, type=ProcessorType.GPU, parameters = parameters)
+    else:
+        if ACNet:
+            ac_object = AC(False, False, type=ProcessorType.CPUCNN, parameters = parameters)
+        else:
+            ac_object = AC(False, False, type=ProcessorType.CPU, parameters = parameters)
     # process each of the files in the list
     for path in input_paths:
 
         # anime4k load and process image
-        anime4k_object.loadImage(path)
-        anime4k_object.process()
+        ac_object.load_image(str(path))
+        ac_object.process()
 
         # construct destination file path object
         output_file_path = output_path / (path.stem + output_suffix, path.suffix)
         print(f'Saving file to: {output_file_path}')
-        anime4k_object.saveImage(str(output_file_path))
+        ac_object.save_image(str(output_file_path))
 
 
-def upscale_videos(input_paths: list, output_suffix: str = "_output", output_path: pathlib.Path = None, *args):
+def upscale_videos(input_paths: list, output_suffix: str = "_output", output_path: pathlib.Path = None, parameters :Parameters = Parameters() ,GPU_mode: bool = False, ACNet :bool = True, codec: Codec = Codec.MP4V):
     """ upscale a list of video files with Anime4k
 
     Args:
         input_paths (list): list of input file paths
         output_suffix (str, optional): output files suffix. Defaults to "_output".
         output_path (pathlib.Path, optional): parent directory of output paths. Defaults to None.
-        args: custom arguments passed to Anime4K
-
-    Default args:
-    int passes=1, double strengthColor=0.3, double strengthGradient=1.0,
-    double zoomFactor=2.0, bool fastMode=False, bool videoMode=True(do not change it),
-    unsigned int maxThreads=std::thread::hardware_concurrency())
+        parameters (Parameters, optional): custom arguments passed to Anime4KCPP.
+        GPU_mode (bool, optional): enable GPU mode. Defaults to False.
+        ACNet (bool, optional): enable ACNet mode. Defaults to True.
+        codec (Codec, optional): codec for video encodeing.  Defaults to MP4V
 
     Raises:
         FileExistsError: when output path exists and isn't a directory
+        ACError
     """
 
     # sanitize input list
@@ -160,12 +175,20 @@ def upscale_videos(input_paths: list, output_suffix: str = "_output", output_pat
     elif not output_path.is_dir():
         raise FileExistsError('destination path already exists and isn\'t a directory')
 
-    # if arguments are not specified, load default arguments
-    if args is None:
-        args = (1, 0.3, 1.0, 2.0, False, True)
+    # set parameters to video mode
+    parameters.videoMode = True
 
     # create anime4k object
-    anime4k_object = Anime4K(*args)
+    if GPU_mode:
+        if ACNet:
+            ac_object = AC(False, True, type=ProcessorType.GPUCNN, parameters = parameters)
+        else:
+            ac_object = AC(True, False, type=ProcessorType.GPU, parameters = parameters)
+    else:
+        if ACNet:
+            ac_object = AC(False, False, type=ProcessorType.CPUCNN, parameters = parameters)
+        else:
+            ac_object = AC(False, False, type=ProcessorType.CPU, parameters = parameters)
 
     # process each of the files in the list
     for path in input_paths:
@@ -175,10 +198,10 @@ def upscale_videos(input_paths: list, output_suffix: str = "_output", output_pat
         temporary_video_file_path = temporary_directory / 'temp.mp4'
 
         # process and save video file to temp/temp.mp4
-        anime4k_object.setVideoSaveInfo(str(temporary_video_file_path))
-        anime4k_object.loadVideo(path)
-        anime4k_object.process()
-        anime4k_object.saveVideo()
+        ac_object.load_video(str(path))
+        ac_object.set_save_video_info(str(temporary_video_file_path), codec)
+        ac_object.process()
+        ac_object.save_video()
 
         ffmpeg_handler.migrate_audio_streams(upscaled_video=temporary_video_file_path,
                                              original_video=path,
@@ -186,4 +209,4 @@ def upscale_videos(input_paths: list, output_suffix: str = "_output", output_pat
 
         # delete temporary directory
         with contextlib.suppress(FileNotFoundError):
-            shutil.rmtree(temporary_directory)
+            os.remove(temporary_directory)

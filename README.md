@@ -21,7 +21,7 @@ import pathlib
 # import pyanime4k library
 import pyanime4k
 
-# display single image upscaled with Anime4K
+# display single image upscaled with Anime4KCPP
 pyanime4k.show_upscaled_image(pathlib.Path('image1.png'))
 
 # upscale a single image
@@ -65,68 +65,71 @@ pyanime4k.upscale_videos(
 
 ### Manual Upscaling
 
-You may also create a low-level Anime4K object and handle each of the steps manually.
-
-#### Images
+You may also create a low-level AC object and handle each of the steps manually.
 
 ```python
+from pyanime4k import ac
 import pyanime4k
 
-p = pyanime4k.Anime4K()
+parameters = ac.Parameters()
+# enable HDN for ACNet
+parameters.HDN = True
 
-# upscaling a single image
-p.loadImage('image1.png')
+a = ac.AC(initGPUCNN = True, parameters = parameters, type=ac.ProcessorType.GPUCNN)
 
-# show processing information
-p.showInfo()
+# load image from file
+a.load_image(r"D:\Temp\anime4k\p1.png")
 
 # start processing
-p.process()
+a.process()
 
 # preview upscaled image
-p.showImage()
+a.show_image()
 
 # save image to file
-p.saveImage('image1_output.png')
-```
+a.save_image('image1_output.png')
 
-#### Videos
+# from PIL and numpy
+import numpy as np
+from PIL import Image
 
-```python
-import pyanime4k
+img = Image.open(r"D:\Temp\anime4k\p1.png").convert("RGB")
+img = np.array(img)
 
-p = pyanime4k.Anime4K()
+# RGB and YUV444 is supported
+a.load_image_from_numpy(img, input_type=ac.AC_INPUT_RGB)
+
+# start processing
+a.process()
+
+# save image to numpy array
+new_img = a.save_image_to_numpy()
+
+new_img  = Image.fromarray(new_img)
+new_img.show()
+
+# save image to file
+a.save_image('image1_output_1.png')
+
+# let's process video
+a.set_video_mode(True)
 
 # load video file
-p.loadVideo('video1.mp4')
+a.load_video(r"D:\Temp\anime4k\P1-1.m4v")
 
 # specify output video file name
 # note that this needs to be done before processing starts
-p.setVideoSaveInfo('video1_output.mp4')
+a.set_save_video_info("output_tmp.mp4", codec=ac.Codec.MP4V)
 
-# show processing information
-p.showInfo()
-
-# start processing
-p.process()
+# start processing with progress
+a.process_with_progress()
 
 # save video to file
-p.saveVideo()
+a.save_video()
+
+# merge audio and auto delete tmp file
+pyanime4k.migrate_audio_streams("output_tmp.mp4",r"D:\Temp\anime4k\P1-1.m4v","output.mp4")
 ```
-
-## Anime4K Parameters
-
-|Parameter|Description|
-|-|-|
-|input|Input file path|
-|output|Output file path|
-|passes|Number of passes|
-|strengthColor|Color pushing strength; ranges from 0 to 1; the higher the thinner|
-|strengthGradient|Gradient pushing strength; ranges from 0 to 1; the higher the sharper|
-|zoomFactor|Upscaling scaling factor|
-|threads|Number of threads to use for video processing|
-|fastMode|Process faster at a cost of potential lower output quality|
-|videoMode|Run in video-processing mode|
 
 ## Other Anime4K Implementations
 

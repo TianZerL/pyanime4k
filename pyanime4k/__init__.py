@@ -1,10 +1,12 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-Name: PyAnime4K module initialization file
+Name: PyAnime4K
 Author: TianZerL
-Editor: K4YT3X
+Editor: TianZerL
 """
 
-from pyanime4k.anime4k.anime4kcpp import Anime4K
-from pyanime4k.upscale import *
+import pyanime4k.error
+import pyanime4k.ac
+import pyanime4k.upscale
+from pyanime4k.utils import *

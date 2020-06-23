@@ -3,7 +3,7 @@
 """
 Name: PyAnime4K pip setup file
 Author: TianZerL
-Editor: K4YT3X
+Editor: K4YT3X, TianZerL
 """
 
 import platform
@@ -13,7 +13,7 @@ system = platform.system()
 if system == "Linux":
     lib = {"": ["*.so"]}
 if system == "Windows":
-    lib = {"": ["*.pyd", "*.dll"]}
+    lib = {"": ["*.dll"]}
 
 
 with open("README.md", "r") as f:
@@ -23,7 +23,7 @@ setuptools.setup(
     name="pyanime4k",
     version="1.0.1",
     author="TianZer",
-    description="An easy way to use anime4k in python",
+    description="An easy way to use anime4kcpp in python",
     long_description=long_description,
     long_description_content_type="text/markdown",
     license="MIT",
@@ -35,7 +35,7 @@ setuptools.setup(
         "License :: OSI Approved :: MIT License",
         "Operating System :: OS Independent",
     ],
-    python_requires=">=3.4",
+    python_requires=">=3.0",
     package_data=lib,
     install_requires=["ffmpy3>=0.2.3"],
 )
