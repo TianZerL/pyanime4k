@@ -11,13 +11,15 @@ from pyanime4k.error import ACError
 import numpy as np
 import multiprocessing
 
-(AC_INPUT_YUV444, AC_INPUT_RGB) = (0,1)
+(AC_INPUT_YUV444, AC_INPUT_RGB) = (0, 1)
+
 
 class Version(object):
     def __init__(self):
         ac_version = c_ac.acGetVersion()
-        self.core = str(ac_version.coreVersion,"utf-8")
-        self.wrapper = str(ac_version.wrapperVersion,"utf-8")
+        self.core = str(ac_version.coreVersion, "utf-8")
+        self.wrapper = str(ac_version.wrapperVersion, "utf-8")
+
 
 class Parameters(object):
     def __init__(self):
@@ -50,6 +52,7 @@ class Parameters(object):
         self.maxThreads = multiprocessing.cpu_count()
         self.HDN = False
 
+
 class ProcessorType(object):
     '''
     processor type of AC
@@ -59,6 +62,7 @@ class ProcessorType(object):
     CPUCNN = AC_CPUCNN
     GPUCNN = AC_GPUCNN
 
+
 class Codec(object):
     OTHER = AC_OTHER
     MP4V = AC_MP4V
@@ -66,16 +70,18 @@ class Codec(object):
     AVC1 = AC_AVC1
     VP09 = AC_VP09
     HEVC = AC_HEVC
-    AV01 = AC_AV01 
+    AV01 = AC_AV01
+
 
 class AC(object):
     '''
     Anime4KCPP core in python
     '''
+
     def __get_c_parameters(self, parameters):
         c_struct = ac_parameters()
-        c_struct.passes = ctypes.c_int(parameters.passes) 
-        c_struct.pushColorCount = ctypes.c_int(parameters.pushColorCount) 
+        c_struct.passes = ctypes.c_int(parameters.passes)
+        c_struct.pushColorCount = ctypes.c_int(parameters.pushColorCount)
         c_struct.strengthColor = ctypes.c_float(parameters.strengthColor)
         c_struct.strengthGradient = ctypes.c_float(parameters.strengthGradient)
         c_struct.zoomFactor = ctypes.c_float(parameters.zoomFactor)
@@ -89,7 +95,7 @@ class AC(object):
         c_struct.HDN = ctypes.c_int(parameters.HDN)
         return c_struct
 
-    def __init__(self, initGPU: bool = True, initGPUCNN: bool= True, platformID: int = 0, deviceID: int = 0, parameters: Parameters = Parameters(), type: ProcessorType = ProcessorType.GPUCNN):
+    def __init__(self, initGPU: bool = True, initGPUCNN: bool = True, platformID: int = 0, deviceID: int = 0, parameters: Parameters = Parameters(), type: ProcessorType = ProcessorType.GPUCNN):
         ac_parameters_p = ctypes.byref(self.__get_c_parameters(parameters))
         err = ctypes.c_int(AC_OK)
         self.ac_object = c_ac.acGetInstance(
@@ -107,7 +113,8 @@ class AC(object):
         self.ac_object = ctypes.c_void_p(self.ac_object)
 
     def __del__(self):
-        c_ac.acFreeInstance(self.ac_object, ctypes.c_int(AC_TRUE), ctypes.c_int(AC_TRUE))
+        c_ac.acFreeInstance(self.ac_object, ctypes.c_int(
+            AC_TRUE), ctypes.c_int(AC_TRUE))
 
     @staticmethod
     def get_version() -> Version:
@@ -133,7 +140,8 @@ class AC(object):
         '''
         load an image from disk
         '''
-        err = c_ac.acLoadImage(self.ac_object, ctypes.c_char_p(src_path.encode()))
+        err = c_ac.acLoadImage(
+            self.ac_object, ctypes.c_char_p(src_path.encode()))
         if err != AC_OK:
             raise ACError(err)
 
@@ -141,15 +149,17 @@ class AC(object):
         '''
         load a video from disk
         '''
-        err = c_ac.acLoadVideo(self.ac_object, ctypes.c_char_p(src_path.encode()))
+        err = c_ac.acLoadVideo(
+            self.ac_object, ctypes.c_char_p(src_path.encode()))
         if err != AC_OK:
             raise ACError(err)
 
-    def set_save_video_info(self, dst_path :str, codec: Codec = Codec.MP4V):
+    def set_save_video_info(self, dst_path: str, codec: Codec = Codec.MP4V):
         '''
         set output video saving path and codec, should be called before calling process
         '''
-        err = c_ac.acSetSaveVideoInfo(self.ac_object, ctypes.c_char_p(dst_path.encode()), ctypes.c_int(codec))
+        err = c_ac.acSetSaveVideoInfo(self.ac_object, ctypes.c_char_p(
+            dst_path.encode()), ctypes.c_int(codec))
         if err != AC_OK:
             raise ACError(err)
 
@@ -201,7 +211,8 @@ class AC(object):
         '''
         save image to disk
         '''
-        err = c_ac.acSaveImage(self.ac_object, ctypes.c_char_p(dst_path.encode()))
+        err = c_ac.acSaveImage(
+            self.ac_object, ctypes.c_char_p(dst_path.encode()))
         if err != AC_OK:
             raise ACError(err)
 
@@ -238,7 +249,7 @@ class AC(object):
     def is_initialized_GPU(self) -> bool:
         '''
         check is initialized GPU for GPU mode
-        '''        
+        '''
         flag = c_ac.acIsInitializedGPU()
         return bool(flag)
 
@@ -259,14 +270,14 @@ class AC(object):
     def is_initialized_GPUCNN(self) -> bool:
         '''
         check is initialized GPU for GPUCNN mode
-        '''   
+        '''
         flag = c_ac.acIsInitializedGPUCNN()
         return bool(flag)
 
     def list_GPUs(self):
         '''
         print platforms and GPUs info
-        '''   
+        '''
         c_length = ctypes.c_size_t()
         c_ac.acListGPUs(None, ctypes.pointer(c_length), None, None)
         length = c_length.value
@@ -277,21 +288,24 @@ class AC(object):
     def check_GPU_support(self, pID: int, dID: int) -> (bool, str):
         '''
         check the specified GPU and return info
-        '''   
+        '''
         c_length = ctypes.c_size_t()
-        flag = c_ac.acCheckGPUSupport(ctypes.c_uint(pID), ctypes.c_uint(dID), None, ctypes.pointer(c_length))
+        flag = c_ac.acCheckGPUSupport(ctypes.c_uint(
+            pID), ctypes.c_uint(dID), None, ctypes.pointer(c_length))
         length = c_length.value
         info = (ctypes.c_char * length)()
-        flag = c_ac.acCheckGPUSupport(ctypes.c_uint(pID), ctypes.c_uint(dID), info, None)
+        flag = c_ac.acCheckGPUSupport(ctypes.c_uint(
+            pID), ctypes.c_uint(dID), info, None)
         return bool(flag), ctypes.string_at(info).decode()
 
     def get_GPU_list(self) -> (str, int, list):
         '''
         return GPU info string, platforms, and a list of devices of each platform
-        '''   
+        '''
         c_length = ctypes.c_size_t()
         c_platforms = ctypes.c_size_t()
-        c_ac.acListGPUs(None, ctypes.pointer(c_length), ctypes.pointer(c_platforms), None)
+        c_ac.acListGPUs(None, ctypes.pointer(c_length),
+                        ctypes.pointer(c_platforms), None)
         length = c_length.value
         platforms = c_platforms.value
         info = (ctypes.c_char * length)()
@@ -302,7 +316,7 @@ class AC(object):
     def load_image_from_numpy(self, np_array: np.array, input_type: int = AC_INPUT_RGB):
         '''
         load an image from numpy array, supported type is RGB and YUV444
-        '''   
+        '''
         if (input_type == AC_INPUT_YUV444):
             input_as_yuv444 = True
         else:
@@ -310,14 +324,15 @@ class AC(object):
 
         rows, cols, _ = np_array.shape
         data = np_array.ctypes.data_as(ctypes.POINTER(ctypes.c_ubyte))
-        err = c_ac.acLoadImageRGBBytes(self.ac_object, ctypes.c_int(rows), ctypes.c_int(cols),data, ctypes.c_int64(0), ctypes.c_int(input_as_yuv444))
+        err = c_ac.acLoadImageRGBBytes(self.ac_object, ctypes.c_int(rows), ctypes.c_int(
+            cols), data, ctypes.c_int64(0), ctypes.c_int(input_as_yuv444))
         if err != AC_OK:
             raise ACError(err)
 
     def save_image_to_numpy(self) -> np.array:
         '''
         save image to a numpy array and return it
-        '''  
+        '''
         err = ctypes.c_int(AC_OK)
         size = c_ac.acGetResultDataLength(self.ac_object, ctypes.pointer(err))
         if err.value != AC_OK:

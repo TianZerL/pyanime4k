@@ -25,7 +25,7 @@ from pyanime4k.wrapper.acwrapper import *
 	} ac_error;
 '''
 
-error_code_str={
+error_code_str = {
     AC_OK: "AC_OK",
     AC_ERROR_NULL_INSTANCE: "AC_ERROR_NULL_INSTANCE",
     AC_ERROR_NULL_PARAMETERS: "AC_ERROR_NULL_PARAMETERS",
@@ -38,8 +38,7 @@ error_code_str={
     AC_ERROR_SAVE_TO_NULL_POINTER: "AC_ERROR_SAVE_TO_NULL_POINTER",
     AC_ERROR_NOT_YUV444: "AC_ERROR_NOT_YUV444"
 }
-        
-    
+
 
 class ACError(Exception):
     def __init__(self, code, *args, **kwargs):

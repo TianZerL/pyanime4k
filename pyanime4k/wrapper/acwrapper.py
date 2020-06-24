@@ -10,53 +10,57 @@ import ctypes
 import os
 import platform
 
-acdll={
-    "Windows":"ac.dll",
-    "Linux":"libac.so",
-    "MacOS":"libac.dylib",
+acdll = {
+    "Windows": "ac.dll",
+    "Linux": "libac.so",
+    "MacOS": "libac.dylib",
 }
 
 curr_path = os.path.dirname(os.path.abspath(__file__))
-os.add_dll_directory(curr_path)
 
-c_ac = ctypes.cdll.LoadLibrary(os.path.join(curr_path, acdll[platform.system()]))
+# Add current path to trusted DLL directory in Windows
+if platform.system() == "Windows":
+    os.add_dll_directory(curr_path)
 
+c_ac = ctypes.cdll.LoadLibrary(
+    os.path.join(curr_path, acdll[platform.system()]))
 
 
 class ac_parameters(ctypes.Structure):
     '''
-	typedef struct ac_parameters
-	{
-		int passes;
-		int pushColorCount;
-		float strengthColor;
-		float strengthGradient;
-		float zoomFactor;
-		ac_bool fastMode;
-		ac_bool videoMode;
-		ac_bool preprocessing;
-		ac_bool postprocessing;
-		unsigned char preFilters;
-		unsigned char postFilters;
-		unsigned int maxThreads;
-		ac_bool HDN;
-	} ac_parameters;
+        typedef struct ac_parameters
+        {
+                int passes;
+                int pushColorCount;
+                float strengthColor;
+                float strengthGradient;
+                float zoomFactor;
+                ac_bool fastMode;
+                ac_bool videoMode;
+                ac_bool preprocessing;
+                ac_bool postprocessing;
+                unsigned char preFilters;
+                unsigned char postFilters;
+                unsigned int maxThreads;
+                ac_bool HDN;
+        } ac_parameters;
     '''
     _fields_ = [
-        ("passes",ctypes.c_int),
-        ("pushColorCount",ctypes.c_int),
-        ("strengthColor",ctypes.c_float),
-        ("strengthGradient",ctypes.c_float),
-        ("zoomFactor",ctypes.c_float),
-        ("fastMode",ctypes.c_int),
-        ("videoMode",ctypes.c_int),
-        ("preprocessing",ctypes.c_int),
-        ("postprocessing",ctypes.c_int),
-        ("preFilters",ctypes.c_uint8),
-        ("postFilters",ctypes.c_uint8),
-        ("maxThreads",ctypes.c_uint),
-        ("HDN",ctypes.c_int)
+        ("passes", ctypes.c_int),
+        ("pushColorCount", ctypes.c_int),
+        ("strengthColor", ctypes.c_float),
+        ("strengthGradient", ctypes.c_float),
+        ("zoomFactor", ctypes.c_float),
+        ("fastMode", ctypes.c_int),
+        ("videoMode", ctypes.c_int),
+        ("preprocessing", ctypes.c_int),
+        ("postprocessing", ctypes.c_int),
+        ("preFilters", ctypes.c_uint8),
+        ("postFilters", ctypes.c_uint8),
+        ("maxThreads", ctypes.c_uint),
+        ("HDN", ctypes.c_int)
     ]
+
 
 class ac_version(ctypes.Structure):
     '''
@@ -67,56 +71,57 @@ class ac_version(ctypes.Structure):
         } ac_version;
     '''
     _fields_ = [
-        ("coreVersion",ctypes.c_char * 6),
-        ("wrapperVersion",ctypes.c_char * 6),
+        ("coreVersion", ctypes.c_char * 6),
+        ("wrapperVersion", ctypes.c_char * 6),
     ]
+
 
 # ac_processType
 (
     AC_CPU,
     AC_GPU,
     AC_CPUCNN,
-    AC_GPUCNN 
+    AC_GPUCNN
 ) = (
-    0,1,2,3
+    0, 1, 2, 3
 )
 
 # ac_bool
 (
-    AC_FALSE, 
+    AC_FALSE,
     AC_TRUE
 ) = (
     0, 1
 )
 
 # ac_error
-(	
+(
     AC_OK,
-	AC_ERROR_NULL_INSTANCE,
-	AC_ERROR_NULL_PARAMETERS,
-	AC_ERROR_INIT_GPU,
-	AC_ERROR_PORCESSOR_TYPE,
-	AC_ERROR_LOAD_IMAGE,
-	AC_ERROR_LOAD_VIDEO,
-	AC_ERROR_INIT_VIDEO_WRITER,
-	AC_ERROR_GPU_PROCESS,
-	AC_ERROR_SAVE_TO_NULL_POINTER,
-	AC_ERROR_NOT_YUV444
+    AC_ERROR_NULL_INSTANCE,
+    AC_ERROR_NULL_PARAMETERS,
+    AC_ERROR_INIT_GPU,
+    AC_ERROR_PORCESSOR_TYPE,
+    AC_ERROR_LOAD_IMAGE,
+    AC_ERROR_LOAD_VIDEO,
+    AC_ERROR_INIT_VIDEO_WRITER,
+    AC_ERROR_GPU_PROCESS,
+    AC_ERROR_SAVE_TO_NULL_POINTER,
+    AC_ERROR_NOT_YUV444
 ) = (
-    0,1,2,3,4,5,6,7,8,9,10
+    0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10
 )
 
 # ac_codec
-(	
+(
     AC_OTHER,
-	AC_MP4V,
-	AC_DXVA,
-	AC_AVC1,
-	AC_VP09,
-	AC_HEVC,
-	AC_AV01 
+    AC_MP4V,
+    AC_DXVA,
+    AC_AVC1,
+    AC_VP09,
+    AC_HEVC,
+    AC_AV01
 ) = (
-    -1,0,1,2,3,4,5
+    -1, 0, 1, 2, 3, 4, 5
 )
 
 ac_instance = ctypes.c_void_p

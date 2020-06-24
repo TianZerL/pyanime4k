@@ -11,7 +11,8 @@ import contextlib
 import os
 import tempfile
 
-def migrate_audio_streams(upscaled_video :str, original_video :str, output_path :str) -> None:
+
+def migrate_audio_streams(upscaled_video: str, original_video: str, output_path: str) -> None:
     """ migrate audio streams 
 
     Args:
@@ -23,8 +24,8 @@ def migrate_audio_streams(upscaled_video :str, original_video :str, output_path 
         FileExistsError: when output path exists and isn't a directory
     """
     ffmpeg_handler.migrate_audio_streams(upscaled_video=upscaled_video,
-                                        original_video=original_video,
-                                        output_path=output_path)
+                                         original_video=original_video,
+                                         output_path=output_path)
 
     with contextlib.suppress(FileNotFoundError):
         os.remove(upscaled_video)
