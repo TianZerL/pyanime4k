@@ -74,6 +74,27 @@ pyanime4k.upscale_videos(
 )
 ```
 
+### Preview a video with OpenCV
+
+```python
+from pyanime4k import ac
+import cv2
+
+video = cv2.VideoCapture(r"D:\Temp\anime4k\P1-1.m4v")
+a = ac.AC()
+while True:
+    v,f = video.read()
+    if not v:
+        break
+    # the default color format of OpenCV is BGR
+    a.load_image_from_numpy(f,input_type=ac.AC_INPUT_BGR)
+    a.process()
+    f = a.save_image_to_numpy()
+    cv2.imshow("video",f)
+    cv2.waitKey(1)
+
+```
+
 ### Manual Upscaling
 
 You may also create a low-level AC object and handle each of the steps manually.
@@ -107,7 +128,7 @@ from PIL import Image
 img = Image.open(r"D:\Temp\anime4k\p1.png").convert("RGB")
 img = np.array(img)
 
-# RGB and YUV444 is supported
+# BGR, RGB and YUV444 is supported
 a.load_image_from_numpy(img, input_type=ac.AC_INPUT_RGB)
 
 # start processing
@@ -118,6 +139,18 @@ new_img = a.save_image_to_numpy()
 
 new_img  = Image.fromarray(new_img)
 new_img.show()
+
+# from OpenCV
+import cv2
+
+img = cv2.imread(r"D:\Temp\anime4k\p1.png")
+
+a.load_image_from_numpy(img,input_type=ac.AC_INPUT_BGR)
+a.process()
+img = a.save_image_to_numpy()
+
+cv2.imshow("opencv", img)
+cv2.waitKey(0)
 
 # save image to file
 a.save_image('image1_output_1.png')
