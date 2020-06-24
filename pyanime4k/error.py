@@ -47,4 +47,4 @@ class ACError(Exception):
         self.msg = error_code_str[code]
 
     def __str__(self):
-        return "AC error: %s" % (self,msg)
+        return "AC error: %s" % (self.msg)

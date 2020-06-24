@@ -1,1 +1,1 @@
-include pyanime4k/wrapper*.dll pyanime4k/anime4k/*.so
+include pyanime4k/wrapper/*.dll pyanime4k/wrapper/*.so
