@@ -9,13 +9,16 @@ PyAnime4K can be installed easily through `pip`(For Windows).
 ```shell
 pip install pyanime4k
 ```
+## compile Anime4KCPP for pyanime4k
+1. Clone [Anime4KCPP](https://github.com/TianZerL/Anime4KCPP)
+2. Follow [this](https://github.com/TianZerL/Anime4KCPP/wiki/Building), and for pyanime4k, only core and c wrapper is needed.  Make sure CMake option `Build_C_wrapper` is turned on, and if you want to build core and c wrapper in one file, turned on `Build_C_wrapper_with_core` (recommend)
 
 ## Manual installation
 1. Clone the repo   
 2. Download from release or compile the Anime4KCPP core and Anime4KCPP C Wrapper.  
-3. Copy `ac.dll` and `Anime4KCPPCore.dll` and  `opencv_world430.dll` to the pyanime4k/wrapper (Windows)  
-   Copy `libac.so` to the pyanime4k/wrapper (Linux)  
-   Copy `libac.dylib` to the pyanime4k/wrapper (macOS)  
+3. - Copy `ac.dll` and `Anime4KCPPCore.dll` (if turned off Build_C_wrapper_with_core option of Anime4KCPP in CMake) and  `opencv_world430.dll` to the pyanime4k/wrapper (Windows)  
+   - Copy `libac.so` to the pyanime4k/wrapper (Linux)  
+   - Copy `libac.dylib` to the pyanime4k/wrapper (macOS)  
 4. Enjoy  
 
 ## Usages
