@@ -11,7 +11,7 @@ from pyanime4k.error import ACError
 import numpy as np
 import multiprocessing
 
-(AC_INPUT_YUV444, AC_INPUT_RGB) = (0, 1)
+(AC_INPUT_BGR, AC_INPUT_RGB, AC_INPUT_YUV444) = (0, 1, 2)
 
 
 class Version(object):
@@ -111,6 +111,8 @@ class AC(object):
             raise ACError(err.value)
         self.parameters = parameters
         self.ac_object = ctypes.c_void_p(self.ac_object)
+
+        self.input_type = AC_INPUT_BGR
 
     def __del__(self):
         c_ac.acFreeInstance(self.ac_object, ctypes.c_int(
@@ -228,7 +230,7 @@ class AC(object):
         '''
         quickly show image which has been inputted
         '''
-        err = c_ac.acShowImage(self.ac_object)
+        err = c_ac.acShowImage(self.ac_object, ctypes.c_int(self.input_type))
         if err != AC_OK:
             raise ACError(err)
 
@@ -317,10 +319,13 @@ class AC(object):
         '''
         load an image from numpy array, supported type is RGB and YUV444
         '''
-        if (input_type == AC_INPUT_YUV444):
+        if input_type == AC_INPUT_YUV444:
             input_as_yuv444 = True
         else:
             input_as_yuv444 = False
+
+        if input_type == AC_INPUT_RGB:
+            self.input_type = AC_INPUT_RGB
 
         rows, cols, _ = np_array.shape
         data = np_array.ctypes.data_as(ctypes.POINTER(ctypes.c_ubyte))
