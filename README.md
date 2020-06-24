@@ -204,6 +204,66 @@ a.save_video()
 pyanime4k.migrate_audio_streams("output_tmp.mp4",r"D:\Temp\anime4k\P1-1.m4v","output.mp4")
 ```
 
+### Process a video with OpenCV
+
+```python
+from pyanime4k import ac
+import cv2
+import time
+import threading
+import queue
+
+# init VideoCapture and VideoWriter
+videoReader = cv2.VideoCapture(r"D:\Temp\anime4k\P1-1.m4v")
+fps = videoReader.get(cv2.CAP_PROP_FPS)
+h = videoReader.get(cv2.CAP_PROP_FRAME_HEIGHT)
+w = videoReader.get(cv2.CAP_PROP_FRAME_WIDTH)
+videoWriter = cv2.VideoWriter(
+    "output.mp4",
+    cv2.VideoWriter_fourcc("m", "p", "4", "v"),
+    fps,
+    (int(w * 2), int(h * 2)),
+)
+
+# init Anime4KCPP
+a = ac.AC(initGPU=False, initGPUCNN=True)
+
+# frame queue
+q = queue.Queue(12)
+
+# write frames to disk
+def writeFrames():
+    while True:
+        f = q.get()
+        videoWriter.write(f)
+        q.task_done()
+
+
+# write frames in new thread
+t = threading.Thread(target=writeFrames, daemon=True)
+t.start()
+
+s = time.time()
+
+while True:
+    v, f = videoReader.read()
+    if not v:
+        break
+    a.load_image_from_numpy(f, input_type=ac.AC_INPUT_BGR)
+    a.process()
+    f = a.save_image_to_numpy()
+    q.put(f)
+
+e = time.time()
+print("time:", e - s, "s")
+
+# wait for finished
+q.join()
+
+videoWriter.release()
+
+```
+
 ## Other Anime4K Implementations
 
 - Go
