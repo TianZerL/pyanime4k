@@ -8,5 +8,5 @@ Editor: TianZerL
 
 import pyanime4k.error
 import pyanime4k.ac
-import pyanime4k.upscale
+from pyanime4k.upscale import upscale_images, upscale_videos, show_upscaled_image
 from pyanime4k.utils import *
