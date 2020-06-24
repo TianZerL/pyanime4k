@@ -58,6 +58,7 @@ def _sanitize_input_paths(input_paths):
 
 def show_upscaled_image(source_path: pathlib.Path,parameters :Parameters = Parameters() ,GPU_mode: bool = False, ACNet :bool = True):
     """ display an image processed by Anime4K09 or ACNet
+    
     Args:
         source_path: input file path.
         parameters (Parameters, optional): custom arguments passed to Anime4KCPP.

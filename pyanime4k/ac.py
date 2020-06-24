@@ -109,6 +109,13 @@ class AC(object):
     def __del__(self):
         c_ac.acFreeInstance(self.ac_object, ctypes.c_int(AC_TRUE), ctypes.c_int(AC_TRUE))
 
+    @staticmethod
+    def get_version() -> Version:
+        '''
+        return the version of Anime4kCPP core
+        '''
+        return Version()
+
     def set_video_mode(self, flag: bool = True):
         err = c_ac.acSetVideoMode(self.ac_object, ctypes.c_int(flag))
         if err != AC_OK:
@@ -164,8 +171,10 @@ class AC(object):
 
     def process_with_progress_callback(self, func):
         '''
-        process video with callback function:\n
-        func(v :float) -> None\n
+        process video with callback function:
+
+        func(v :float) -> None
+
         v: progress value (0 to 1)
         '''
         c_callback = ctypes.CFUNCTYPE(None, ctypes.c_double)
@@ -175,9 +184,12 @@ class AC(object):
 
     def process_with_progress_time_callback(self, func):
         '''
-        process video with callback function:\n
-        func(v :float, t: float) -> None\n
-        v: progress value (0 to 1)\n
+        process video with callback function:
+
+        func(v :float, t: float) -> None
+
+        v: progress value (0 to 1)
+
         t: time used
         '''
         c_callback = ctypes.CFUNCTYPE(None, ctypes.c_double, ctypes.c_double)
