@@ -156,9 +156,32 @@ class AC(object):
 
     def process_with_progress(self):
         '''
-        process image or video with progress displaying
+        process video with progress displaying
         '''
         err = c_ac.acProcessWithPrintProgress(self.ac_object)
+        if err != AC_OK:
+            raise ACError(err)
+
+    def process_with_progress_callback(self, func):
+        '''
+        process video with callback function:\n
+        func(v :float) -> None\n
+        v: progress value (0 to 1)
+        '''
+        c_callback = ctypes.CFUNCTYPE(None, ctypes.c_double)
+        err = c_ac.acProcessWithProgress(self.ac_object, c_callback(func))
+        if err != AC_OK:
+            raise ACError(err)
+
+    def process_with_progress_time_callback(self, func):
+        '''
+        process video with callback function:\n
+        func(v :float, t: float) -> None\n
+        v: progress value (0 to 1)\n
+        t: time used
+        '''
+        c_callback = ctypes.CFUNCTYPE(None, ctypes.c_double, ctypes.c_double)
+        err = c_ac.acProcessWithProgressTime(self.ac_object, c_callback(func))
         if err != AC_OK:
             raise ACError(err)
 

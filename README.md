@@ -135,6 +135,35 @@ a.set_save_video_info("output_tmp.mp4", codec=ac.Codec.MP4V)
 # start processing with progress
 a.process_with_progress()
 
+# process with callback function
+def print_progress_time(v, t):
+    print("%.2f%% elapsed: %.2f remaining:  %.2f" % (v * 100, t, t/v - t), end="\r")
+
+'''
+#or
+def print_progress(v):
+    print("%.2f%%" % (v * 100), end="\r")
+'''
+
+# load video file
+a.load_video(r"D:\Temp\anime4k\P1-1.m4v")
+
+# specify output video file name
+# note that this needs to be done before processing starts
+a.set_save_video_info("output_tmp_.mp4", codec=ac.Codec.MP4V)
+
+# start processing with progress value and time callback
+a.process_with_progress_time_callback(print_progress_time)
+
+'''
+#or
+# start processing with progress value callback
+a.process_with_progress_callback(print_progress)
+'''
+
+# save video to file
+a.save_video()
+
 # save video to file
 a.save_video()
 
