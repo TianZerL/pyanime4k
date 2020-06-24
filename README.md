@@ -9,7 +9,7 @@ PyAnime4K can be installed easily through `pip`(For Windows).
 ```shell
 pip install pyanime4k
 ```
-## compile Anime4KCPP for pyanime4k
+## Compile Anime4KCPP for pyanime4k
 1. Clone [Anime4KCPP](https://github.com/TianZerL/Anime4KCPP)
 2. Follow [this](https://github.com/TianZerL/Anime4KCPP/wiki/Building), and for pyanime4k, only core and c wrapper is needed.  Make sure CMake option `Build_C_wrapper` is turned on, and if you want to build core and c wrapper in one file, turned on `Build_C_wrapper_with_core` (recommend)
 
@@ -151,7 +151,7 @@ pyanime4k.migrate_audio_streams("output_tmp.mp4",r"D:\Temp\anime4k\P1-1.m4v","ou
 - C#
   - [shadow578/Anime4kSharp](https://github.com/shadow578/Anime4kSharp)
   - [net2cn/Anime4KSharp](https://github.com/net2cn/Anime4KSharp)
-- Java
+- GLSL
   - [bloc97/Anime4K](https://github.com/bloc97/Anime4K)
 - Rust
   - [andraantariksa/Anime4K-rs](https://github.com/andraantariksa/Anime4K-rs)
