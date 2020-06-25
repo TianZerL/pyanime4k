@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-Name: PyAnime4K upscaler
+Name: PyAnime4K utils
 Author: TianZerL
 Editor: TianZerL
 """

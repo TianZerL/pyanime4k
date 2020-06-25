@@ -8,6 +8,7 @@ Editor: K4YT3X, TianZerL
 
 import platform
 import setuptools
+from pyanime4k.ac import Version
 
 
 with open("README.md", "r") as f:
@@ -15,7 +16,7 @@ with open("README.md", "r") as f:
 
 setuptools.setup(
     name="pyanime4k",
-    version="2.2.1",
+    version=Version.pyanime4k,
     author="TianZer",
     description="An easy way to use anime4kcpp in python",
     long_description=long_description,

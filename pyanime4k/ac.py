@@ -19,7 +19,7 @@ class Version(object):
         ac_version = c_ac.acGetVersion()
         self.core = str(ac_version.coreVersion, "utf-8")
         self.wrapper = str(ac_version.wrapperVersion, "utf-8")
-        self.pyanime4k = "2.2.1"
+        self.pyanime4k = "2.2.3"
 
 
 class Parameters(object):
@@ -52,6 +52,36 @@ class Parameters(object):
         self.postFilters = 40
         self.maxThreads = multiprocessing.cpu_count()
         self.HDN = False
+
+    def print_info(self):
+        print(
+            "passes:            %d\n"
+            "pushColorCount:    %d\n"
+            "strengthColor:     %.2f\n"
+            "strengthGradient:  %.2f\n"
+            "zoomFactor:        %.2f\n"
+            "fastMode:          %r\n"
+            "videoMode:         %r\n"
+            "preprocessing:     %r\n"
+            "postprocessing:    %r\n"
+            "preFilters:        %d\n"
+            "postFilters:       %d\n"
+            "maxThreads:        %d\n"
+            "HDN:               %r" % (
+                self.passes,
+                self.pushColorCount,
+                self.strengthColor,
+                self.strengthGradient,
+                self.zoomFactor,
+                self.fastMode,
+                self.videoMode,
+                self.preprocessing,
+                self.postprocessing,
+                self.preFilters,
+                self.postFilters,
+                self.maxThreads,
+                self.HDN
+            ))
 
 
 class ProcessorType(object):
@@ -111,10 +141,10 @@ class AC(object):
             initGPU = False
             initGPUCNN = False
             # Test all GPUs
-            _, platforms, devices = self.get_GPU_list()
+            _, platforms, devices = AC.get_GPU_list()
             for p_id in range(platforms):
                 for d_id in range(devices[p_id]):
-                    support_flag = self.check_GPU_support(
+                    support_flag = AC.check_GPU_support(
                         p_id, d_id)
                     if support_flag:
                         type = ProcessorType.GPUCNN
@@ -146,7 +176,7 @@ class AC(object):
     @staticmethod
     def get_version() -> Version:
         '''
-        return the version of Anime4kCPP core
+        return the version of Anime4kCPP core and pyanime4k
         '''
         return Version()
 
@@ -307,7 +337,8 @@ class AC(object):
         flag = c_ac.acIsInitializedGPUCNN()
         return bool(flag)
 
-    def list_GPUs(self):
+    @staticmethod
+    def list_GPUs():
         '''
         print platforms and GPUs info
         '''
@@ -318,7 +349,8 @@ class AC(object):
         c_ac.acListGPUs(info, None, None, None)
         print(ctypes.string_at(info).decode())
 
-    def check_GPU_support(self, pID: int, dID: int) -> (bool, str):
+    @staticmethod
+    def check_GPU_support(pID: int, dID: int) -> (bool, str):
         '''
         check the specified GPU and return info
         '''
@@ -331,7 +363,8 @@ class AC(object):
             pID), ctypes.c_uint(dID), info, None)
         return bool(flag), ctypes.string_at(info).decode()
 
-    def get_GPU_list(self) -> (str, int, list):
+    @staticmethod
+    def get_GPU_list() -> (str, int, list):
         '''
         return GPU info string, platforms, and a list of devices of each platform
         '''
