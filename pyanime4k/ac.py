@@ -12,6 +12,7 @@ import numpy as np
 import multiprocessing
 
 (AC_INPUT_BGR, AC_INPUT_RGB, AC_INPUT_YUV444) = (0, 1, 2)
+(AC_PROCESS_PAUSED, AC_PROCESS_STOP, AC_PROCESS_RUNNING) = (0, 1, 2)
 
 
 class Version(object):
@@ -171,6 +172,8 @@ class AC(object):
         self.processor_type = type
         self.GPUID = (platformID, deviceID)
 
+        self.process_status = AC_PROCESS_STOP
+
     def __del__(self):
         c_ac.acFreeInstance(self.ac_object, ctypes.c_int(
             AC_TRUE), ctypes.c_int(AC_TRUE))
@@ -234,17 +237,25 @@ class AC(object):
         '''
         process image or video
         '''
+        self.process_status = AC_PROCESS_RUNNING
+
         err = c_ac.acProcess(self.ac_object)
         if err != AC_OK:
             raise ACError(err)
+
+        self.process_status = AC_PROCESS_STOP
 
     def process_with_progress(self):
         '''
         process video with progress displaying
         '''
+        self.process_status = AC_PROCESS_RUNNING
+
         err = c_ac.acProcessWithPrintProgress(self.ac_object)
         if err != AC_OK:
             raise ACError(err)
+
+        self.process_status = AC_PROCESS_STOP
 
     def process_with_progress_callback(self, func):
         '''
@@ -254,10 +265,14 @@ class AC(object):
 
         v: progress value (0 to 1)
         '''
+        self.process_status = AC_PROCESS_RUNNING
+
         c_callback = ctypes.CFUNCTYPE(None, ctypes.c_double)
         err = c_ac.acProcessWithProgress(self.ac_object, c_callback(func))
         if err != AC_OK:
             raise ACError(err)
+
+        self.process_status = AC_PROCESS_STOP
 
     def process_with_progress_time_callback(self, func):
         '''
@@ -269,10 +284,14 @@ class AC(object):
 
         t: time used
         '''
+        self.process_status = AC_PROCESS_RUNNING
+
         c_callback = ctypes.CFUNCTYPE(None, ctypes.c_double, ctypes.c_double)
         err = c_ac.acProcessWithProgressTime(self.ac_object, c_callback(func))
         if err != AC_OK:
             raise ACError(err)
+
+        self.process_status = AC_PROCESS_STOP
 
     def pause_video_process(self):
         '''
@@ -282,6 +301,8 @@ class AC(object):
         if err != AC_OK:
             raise ACError(err)
 
+        self.process_status = AC_PROCESS_PAUSED
+
     def continue_video_process(self):
         '''
         continue video processing
@@ -290,6 +311,8 @@ class AC(object):
         if err != AC_OK:
             raise ACError(err)
 
+        self.process_status = AC_PROCESS_RUNNING
+
     def stop_video_process(self):
         '''
         stop video processing
@@ -297,6 +320,11 @@ class AC(object):
         err = c_ac.acStopVideoProcess(self.ac_object)
         if err != AC_OK:
             raise ACError(err)
+
+        self.process_status = AC_PROCESS_STOP
+
+    def get_process_status(self) -> int:
+        return self.process_status
 
     def save_image(self, dst_path: str):
         '''
