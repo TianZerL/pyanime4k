@@ -95,6 +95,27 @@ while True:
 
 ```
 
+### Specify GPU
+
+You can specify GPU for processing if you have more than one GPU
+
+```python
+from pyanime4k import ac
+
+# print GPU list to get pID and dID of each GPU
+ac.AC.list_GPUs()
+
+# check GPU support
+flag, info = ac.AC.check_GPU_support(pID=1, dID=0)
+
+# init AC core with pID and dID
+if flag:
+    a = ac.AC(platformID=1, deviceID=0)
+
+print(info)
+
+```
+
 ### Manual Upscaling
 
 You may also create a low-level AC object and handle each of the steps manually.
