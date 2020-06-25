@@ -20,7 +20,7 @@ class Version(object):
         self.core = str(ac_version.coreVersion, "utf-8")
         self.wrapper = str(ac_version.wrapperVersion, "utf-8")
 
-    pyanime4k = "2.2.3"
+    pyanime4k = "2.2.4"
 
 
 class Parameters(object):
@@ -219,12 +219,12 @@ class AC(object):
         if err != AC_OK:
             raise ACError(err)
 
-    def set_save_video_info(self, dst_path: str, codec: Codec = Codec.MP4V):
+    def set_save_video_info(self, dst_path: str, codec: Codec = Codec.MP4V, fps: float = 0):
         '''
         set output video saving path and codec, should be called before calling process
         '''
         err = c_ac.acSetSaveVideoInfo(self.ac_object, ctypes.c_char_p(
-            dst_path.encode()), ctypes.c_int(codec))
+            dst_path.encode()), ctypes.c_int(codec), ctypes.c_double(fps))
         if err != AC_OK:
             raise ACError(err)
 
@@ -269,6 +269,30 @@ class AC(object):
         '''
         c_callback = ctypes.CFUNCTYPE(None, ctypes.c_double, ctypes.c_double)
         err = c_ac.acProcessWithProgressTime(self.ac_object, c_callback(func))
+        if err != AC_OK:
+            raise ACError(err)
+
+    def pause_video_process(self):
+        '''
+        pause video processing
+        '''
+        err = c_ac.acPauseVideoProcess(self.ac_object)
+        if err != AC_OK:
+            raise ACError(err)
+
+    def continue_video_process(self):
+        '''
+        continue video processing
+        '''
+        err = c_ac.acContinueVideoProcess(self.ac_object)
+        if err != AC_OK:
+            raise ACError(err)
+
+    def stop_video_process(self):
+        '''
+        stop video processing
+        '''
+        err = c_ac.acStopVideoProcess(self.ac_object)
         if err != AC_OK:
             raise ACError(err)
 
@@ -433,3 +457,20 @@ class AC(object):
 
         np_array = np_array.reshape((shape[0], shape[1], shape[2]))
         return np_array
+
+    def proccess_image_with_numpy(self, np_array: np.array, input_type: int = AC_INPUT_BGR) -> np.array:
+        '''
+        For quickly process image with OpenCV
+
+        same with:
+
+        load_image_from_numpy(img, AC_INPUT_BGR)
+
+        process()
+
+        img = save_image_to_numpy()
+
+        '''
+        self.load_image_from_numpy(np_array, input_type)
+        self.process()
+        return self.save_image_to_numpy()
