@@ -168,6 +168,7 @@ class AC(object):
 
         self.input_type = AC_INPUT_BGR
         self.processor_type = type
+        self.GPUID = (platformID, deviceID)
 
     def __del__(self):
         c_ac.acFreeInstance(self.ac_object, ctypes.c_int(
@@ -378,6 +379,13 @@ class AC(object):
         devices = (ctypes.c_size_t * length)()
         c_ac.acListGPUs(info, None, None, devices)
         return ctypes.string_at(info).decode(), platforms, [devices[i] for i in range(platforms)]
+
+    def get_current_GPU_info(self) -> str:
+        '''
+        return the current GPU info string
+        '''
+        _, info = AC.check_GPU_support(*self.GPUID)
+        return info
 
     def load_image_from_numpy(self, np_array: np.array, input_type: int = AC_INPUT_RGB):
         '''

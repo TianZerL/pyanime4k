@@ -114,6 +114,9 @@ if flag:
 
 print(info)
 
+# to check the current GPU
+print(a.get_current_GPU_info())
+
 ```
 
 ### Manual Upscaling
