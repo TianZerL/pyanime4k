@@ -19,7 +19,8 @@ class Version(object):
         ac_version = c_ac.acGetVersion()
         self.core = str(ac_version.coreVersion, "utf-8")
         self.wrapper = str(ac_version.wrapperVersion, "utf-8")
-        self.pyanime4k = "2.2.3"
+
+    pyanime4k = "2.2.3"
 
 
 class Parameters(object):
