@@ -222,6 +222,8 @@ class AC(object):
     def set_save_video_info(self, dst_path: str, codec: Codec = Codec.MP4V, fps: float = 0):
         '''
         set output video saving path and codec, should be called before calling process
+
+        set fps to 0 for automatic detection
         '''
         err = c_ac.acSetSaveVideoInfo(self.ac_object, ctypes.c_char_p(
             dst_path.encode()), ctypes.c_int(codec), ctypes.c_double(fps))

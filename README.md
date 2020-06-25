@@ -87,10 +87,8 @@ while True:
     if not v:
         break
     # the default color format of OpenCV is BGR
-    a.load_image_from_numpy(f,input_type=ac.AC_INPUT_BGR)
-    a.process()
-    f = a.save_image_to_numpy()
-    cv2.imshow("video",f)
+    f = a.proccess_image_with_numpy(f)
+    cv2.imshow("video", f)
     cv2.waitKey(1)
 
 ```
@@ -273,9 +271,7 @@ while True:
     v, f = videoReader.read()
     if not v:
         break
-    a.load_image_from_numpy(f, input_type=ac.AC_INPUT_BGR)
-    a.process()
-    f = a.save_image_to_numpy()
+    f = a.proccess_image_with_numpy(f)
     q.put(f)
 
 e = time.time()
