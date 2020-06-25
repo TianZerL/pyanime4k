@@ -10,7 +10,7 @@ import ctypes
 import os
 import platform
 
-acdll = {
+ac_lib = {
     "Windows": "ac.dll",
     "Linux": "libac.so",
     "Darwin": "libac.dylib",
@@ -23,7 +23,7 @@ if platform.system() == "Windows":
     os.add_dll_directory(curr_path)
 
 c_ac = ctypes.cdll.LoadLibrary(
-    os.path.join(curr_path, acdll[platform.system()]))
+    os.path.join(curr_path, ac_lib[platform.system()]))
 
 
 class ac_parameters(ctypes.Structure):

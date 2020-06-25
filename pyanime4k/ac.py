@@ -19,6 +19,7 @@ class Version(object):
         ac_version = c_ac.acGetVersion()
         self.core = str(ac_version.coreVersion, "utf-8")
         self.wrapper = str(ac_version.wrapperVersion, "utf-8")
+        self.pyanime4k = "2.2.1"
 
 
 class Parameters(object):
@@ -61,6 +62,14 @@ class ProcessorType(object):
     GPU = AC_GPU
     CPUCNN = AC_CPUCNN
     GPUCNN = AC_GPUCNN
+    AUTO = -1
+
+    type_code_str = {
+        CPU: "CPU",
+        GPU: "GPU",
+        CPUCNN: "CPUCNN",
+        GPUCNN: "GPUCNN"
+    }
 
 
 class Codec(object):
@@ -95,7 +104,22 @@ class AC(object):
         c_struct.HDN = ctypes.c_int(parameters.HDN)
         return c_struct
 
-    def __init__(self, initGPU: bool = True, initGPUCNN: bool = True, platformID: int = 0, deviceID: int = 0, parameters: Parameters = Parameters(), type: ProcessorType = ProcessorType.GPUCNN):
+    def __init__(self, initGPU: bool = True, initGPUCNN: bool = True, platformID: int = 0, deviceID: int = 0, parameters: Parameters = Parameters(), type: ProcessorType = ProcessorType.AUTO):
+        if type == ProcessorType.AUTO:
+            # init it to CPUCNN
+            type = ProcessorType.CPUCNN
+            initGPU = False
+            initGPUCNN = False
+            # Test all GPUs
+            _, platforms, devices = self.get_GPU_list()
+            for p_id in range(platforms):
+                for d_id in range(devices[p_id]):
+                    support_flag = self.check_GPU_support(
+                        p_id, d_id)
+                    if support_flag:
+                        type = ProcessorType.GPUCNN
+                        initGPUCNN = True
+
         ac_parameters_p = ctypes.byref(self.__get_c_parameters(parameters))
         err = ctypes.c_int(AC_OK)
         self.ac_object = c_ac.acGetInstance(
@@ -113,6 +137,7 @@ class AC(object):
         self.ac_object = ctypes.c_void_p(self.ac_object)
 
         self.input_type = AC_INPUT_BGR
+        self.processor_type = type
 
     def __del__(self):
         c_ac.acFreeInstance(self.ac_object, ctypes.c_int(
@@ -124,6 +149,12 @@ class AC(object):
         return the version of Anime4kCPP core
         '''
         return Version()
+
+    def get_processor_type(self) -> str:
+        '''
+        return the processor type string
+        '''
+        return ProcessorType.type_code_str[self.processor_type]
 
     def set_video_mode(self, flag: bool = True):
         err = c_ac.acSetVideoMode(self.ac_object, ctypes.c_int(flag))
