@@ -13,7 +13,7 @@ import platform
 acdll = {
     "Windows": "ac.dll",
     "Linux": "libac.so",
-    "MacOS": "libac.dylib",
+    "Darwin": "libac.dylib",
 }
 
 curr_path = os.path.dirname(os.path.abspath(__file__))

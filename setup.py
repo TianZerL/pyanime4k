@@ -10,12 +10,12 @@ import platform
 import setuptools
 
 system = platform.system()
-if system == "Linux":
-    lib = {"": ["*.so"]}
-elif system == "Windows":
-    lib = {"": ["*.dll"]}
-else:
-    lib = {"": ["*.dylib"]}
+
+lib = {
+    "Windows": {"": ["*.dll"]},
+    "Linux": {"": ["*.so"]},
+    "Darwin": {"": ["*.dylib"]}
+}
 
 
 with open("README.md", "r") as f:
@@ -29,7 +29,7 @@ setuptools.setup(
     long_description=long_description,
     long_description_content_type="text/markdown",
     license="MIT",
-    keywords="anime4k",
+    keywords=("anime", "anime4k", "anime4kcpp", "upscale"),
     url="https://github.com/TianZerL/pyanime4k",
     packages=setuptools.find_packages(),
     classifiers=[
@@ -38,6 +38,6 @@ setuptools.setup(
         "Operating System :: OS Independent",
     ],
     python_requires=">=3.0",
-    package_data=lib,
-    install_requires=["ffmpy3>=0.2.3"],
+    package_data=lib[system],
+    install_requires=["ffmpeg-python >= 0.2.0", "numpy >= 1.17.3"],
 )
