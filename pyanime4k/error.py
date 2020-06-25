@@ -6,7 +6,7 @@ Author: TianZerL
 Editor: TianZerL
 """
 
-from pyanime4k.wrapper.acwrapper import *
+from pyanime4k.wrapper import *
 
 '''
 	typedef enum ac_error

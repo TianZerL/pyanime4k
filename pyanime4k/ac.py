@@ -6,7 +6,7 @@ Author: TianZerL
 Editor: TianZerL
 """
 
-from pyanime4k.wrapper.acwrapper import *
+from pyanime4k.wrapper import *
 from pyanime4k.error import ACError
 import numpy as np
 import multiprocessing

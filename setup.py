@@ -9,14 +9,6 @@ Editor: K4YT3X, TianZerL
 import platform
 import setuptools
 
-system = platform.system()
-
-lib = {
-    "Windows": {"": ["*.dll"]},
-    "Linux": {"": ["*.so"]},
-    "Darwin": {"": ["*.dylib"]}
-}
-
 
 with open("README.md", "r") as f:
     long_description = f.read()
@@ -29,7 +21,7 @@ setuptools.setup(
     long_description=long_description,
     long_description_content_type="text/markdown",
     license="MIT",
-    keywords=("anime", "anime4k", "anime4kcpp", "upscale"),
+    keywords=["anime", "anime4k", "anime4kcpp", "upscale"],
     url="https://github.com/TianZerL/pyanime4k",
     packages=setuptools.find_packages(),
     classifiers=[
@@ -38,6 +30,6 @@ setuptools.setup(
         "Operating System :: OS Independent",
     ],
     python_requires=">=3.0",
-    package_data=lib[system],
+    include_package_data=True,
     install_requires=["ffmpeg-python >= 0.2.0", "numpy >= 1.17.3"],
 )
