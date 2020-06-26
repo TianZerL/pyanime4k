@@ -10,12 +10,15 @@ PyAnime4K can be installed easily through `pip`(For Windows and Linux).
 pip install pyanime4k
 ```
 
-***Notice: pip Linux version built on Ubuntu14.04, should works in most distributions, make sure you have installed libgtk2.0 first***
-## Compile Anime4KCPP for pyanime4k
+***Notice: pip Linux version built on Ubuntu14.04, should works in most distributions, make sure you have installed libgtk2.0 and zlib first***
+
+## Manual installation
+
+### Compile Anime4KCPP for pyanime4k
 1. Clone [Anime4KCPP](https://github.com/TianZerL/Anime4KCPP)
 2. Follow [this](https://github.com/TianZerL/Anime4KCPP/wiki/Building), and for pyanime4k, only core and c wrapper is needed.  Make sure CMake option `Build_C_wrapper` is turned on, and if you want to build core and c wrapper in one file, turned on `Build_C_wrapper_with_core` (recommend)
 
-## Manual installation
+### install pyanime4k
 1. Clone the repo   
 2. Download from release or compile the Anime4KCPP core and Anime4KCPP C Wrapper.  
 3. - Copy `ac.dll` and `Anime4KCPPCore.dll` (if turned off Build_C_wrapper_with_core option of Anime4KCPP in CMake) and  `opencv_world430.dll` to the pyanime4k/wrapper (Windows)  
@@ -92,6 +95,8 @@ while True:
     f = a.proccess_image_with_numpy(f)
     cv2.imshow("video", f)
     cv2.waitKey(1)
+
+cv2.destroyAllWindows()
 
 ```
 
