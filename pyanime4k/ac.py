@@ -195,7 +195,7 @@ class AC(object):
         err = c_ac.acSetVideoMode(self.ac_object, ctypes.c_int(flag))
         if err != AC_OK:
             raise ACError(err)
-        self.parameters.videoMode = True
+        self.parameters.videoMode = flag
 
     def set_arguments(self, parameters: Parameters):
         ac_parameters_p = ctypes.byref(self.__get_c_parameters(parameters))
