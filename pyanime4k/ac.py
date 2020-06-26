@@ -21,7 +21,7 @@ class Version(object):
         self.core = str(ac_version.coreVersion, "utf-8")
         self.wrapper = str(ac_version.wrapperVersion, "utf-8")
 
-    pyanime4k = "2.2.4"
+    pyanime4k = "2.2.5"
 
 
 class Parameters(object):
@@ -195,6 +195,7 @@ class AC(object):
         err = c_ac.acSetVideoMode(self.ac_object, ctypes.c_int(flag))
         if err != AC_OK:
             raise ACError(err)
+        self.parameters.videoMode = True
 
     def set_arguments(self, parameters: Parameters):
         ac_parameters_p = ctypes.byref(self.__get_c_parameters(parameters))
@@ -217,6 +218,8 @@ class AC(object):
         '''
         load a video from disk
         '''
+        if self.parameters.videoMode == False:
+            raise ACError(AC_ERROR_VIDEO_MODE_UNINIT)
         err = c_ac.acLoadVideo(
             self.ac_object, ctypes.c_char_p(src_path.encode()))
         if err != AC_OK:

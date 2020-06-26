@@ -16,7 +16,7 @@ ac_lib = {
     "Darwin": "libac.dylib",
 }
 
-curr_path = os.path.dirname(os.path.abspath(__file__))
+curr_path = os.path.dirname(os.path.realpath(__file__))
 
 # Add current path to trusted DLL directory in Windows
 if platform.system() == "Windows":
@@ -106,9 +106,10 @@ class ac_version(ctypes.Structure):
     AC_ERROR_INIT_VIDEO_WRITER,
     AC_ERROR_GPU_PROCESS,
     AC_ERROR_SAVE_TO_NULL_POINTER,
-    AC_ERROR_NOT_YUV444
+    AC_ERROR_NOT_YUV444,
+    AC_ERROR_VIDEO_MODE_UNINIT
 ) = (
-    0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10
+    0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11
 )
 
 # ac_codec
