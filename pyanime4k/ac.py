@@ -12,7 +12,7 @@ import numpy as np
 import multiprocessing
 
 (AC_INPUT_BGR, AC_INPUT_RGB, AC_INPUT_YUV444,
- AC_INPUT_RGB32, AC_INPUT_BGR32) = (0, 1, 2, 3, 3)
+ AC_INPUT_RGB32, AC_INPUT_BGR32) = (0, 1, 2, 3, 4)
 (AC_PROCESS_PAUSED, AC_PROCESS_STOP, AC_PROCESS_RUNNING) = (0, 1, 2)
 
 
@@ -453,9 +453,9 @@ class AC(object):
 
         input_as_yuv444 = input_type == AC_INPUT_YUV444
 
-        input_as_rgb32 = input_type == AC_INPUT_RGB32
+        input_as_rgb32 = (input_type == AC_INPUT_RGB32 or input_type == AC_INPUT_BGR32)
 
-        if input_type == AC_INPUT_RGB:
+        if input_type == AC_INPUT_RGB or input_type == AC_INPUT_RGB32:
             self.input_type = AC_INPUT_RGB
 
         rows, cols, _ = np_array.shape
