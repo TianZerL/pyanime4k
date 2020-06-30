@@ -96,7 +96,6 @@ while True:
     cv2.imshow("video", f)
     cv2.waitKey(1)
 
-cv2.destroyAllWindows()
 
 ```
 
