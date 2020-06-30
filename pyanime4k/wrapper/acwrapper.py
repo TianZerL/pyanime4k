@@ -18,10 +18,6 @@ ac_lib = {
 
 curr_path = os.path.dirname(os.path.realpath(__file__))
 
-# Add current path to trusted DLL directory in Windows
-if platform.system() == "Windows":
-    os.add_dll_directory(curr_path)
-
 c_ac = ctypes.cdll.LoadLibrary(
     os.path.join(curr_path, ac_lib[platform.system()]))
 

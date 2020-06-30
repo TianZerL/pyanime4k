@@ -11,7 +11,8 @@ from pyanime4k.error import ACError
 import numpy as np
 import multiprocessing
 
-(AC_INPUT_BGR, AC_INPUT_RGB, AC_INPUT_YUV444) = (0, 1, 2)
+(AC_INPUT_BGR, AC_INPUT_RGB, AC_INPUT_YUV444,
+ AC_INPUT_RGB32, AC_INPUT_BGR32) = (0, 1, 2, 3, 3)
 (AC_PROCESS_PAUSED, AC_PROCESS_STOP, AC_PROCESS_RUNNING) = (0, 1, 2)
 
 
@@ -449,10 +450,10 @@ class AC(object):
         '''
         load an image from numpy array, supported type is RGB and YUV444
         '''
-        if input_type == AC_INPUT_YUV444:
-            input_as_yuv444 = True
-        else:
-            input_as_yuv444 = False
+
+        input_as_yuv444 = input_type == AC_INPUT_YUV444
+
+        input_as_rgb32 = input_type == AC_INPUT_RGB32
 
         if input_type == AC_INPUT_RGB:
             self.input_type = AC_INPUT_RGB
@@ -460,7 +461,7 @@ class AC(object):
         rows, cols, _ = np_array.shape
         data = np_array.ctypes.data_as(ctypes.POINTER(ctypes.c_ubyte))
         err = c_ac.acLoadImageRGBBytes(self.ac_object, ctypes.c_int(rows), ctypes.c_int(
-            cols), data, ctypes.c_int64(0), ctypes.c_int(input_as_yuv444))
+            cols), data, ctypes.c_int64(0), ctypes.c_int(input_as_yuv444), ctypes.c_int(input_as_rgb32))
         if err != AC_OK:
             raise ACError(err)
 
