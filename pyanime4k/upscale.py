@@ -14,7 +14,6 @@ from pyanime4k.ac import Codec
 from pyanime4k.ac import ProcessorType
 
 # built-in imports
-import contextlib
 import pathlib
 import os
 import tempfile
@@ -110,7 +109,7 @@ def upscale_images(input_paths: list, output_suffix: str = "_output", output_pat
     if output_path is None:
 
         # destination path is first input file's parent directory
-        output_path = input_paths.parent
+        output_path = input_paths[0].parent
 
     # if destination path doesn't exist
     if not output_path.exists():
@@ -145,8 +144,8 @@ def upscale_images(input_paths: list, output_suffix: str = "_output", output_pat
         ac_object.process()
 
         # construct destination file path object
-        output_file_path = output_path / \
-            (path.stem + output_suffix, path.suffix)
+        output_file_path = output_path.joinpath((path.stem + output_suffix + path.suffix))
+            
         print(f'Saving file to: {output_file_path}')
         ac_object.save_image(str(output_file_path))
 
@@ -175,7 +174,7 @@ def upscale_videos(input_paths: list, output_suffix: str = "_output", output_pat
     if output_path is None:
 
         # destination path is first input file's parent directory
-        output_path = input_paths.parent
+        output_path = input_paths[0].parent
 
     # if destination path doesn't exist
     if not output_path.exists():
@@ -211,18 +210,14 @@ def upscale_videos(input_paths: list, output_suffix: str = "_output", output_pat
 
         # create temporary directory to save the upscaled video
         temporary_directory = pathlib.Path(tempfile.mkdtemp())
-        temporary_video_file_path = temporary_directory / 'temp.mp4'
+        temporary_video_file_path = temporary_directory.joinpath('temp.mp4')
 
         # process and save video file to temp/temp.mp4
         ac_object.load_video(str(path))
         ac_object.set_save_video_info(str(temporary_video_file_path), codec)
-        ac_object.process()
+        ac_object.process_with_progress()
         ac_object.save_video()
 
         ffmpeg_handler.migrate_audio_streams(upscaled_video=temporary_video_file_path,
                                              original_video=path,
-                                             output_path=(output_path / (path.stem + output_suffix, path.suffix)))
-
-        # delete temporary directory
-        with contextlib.suppress(FileNotFoundError):
-            os.remove(temporary_directory)
+                                             output_path=(output_path.joinpath(path.stem + output_suffix + path.suffix)))
