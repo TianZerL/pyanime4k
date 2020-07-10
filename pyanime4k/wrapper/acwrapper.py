@@ -18,6 +18,9 @@ ac_lib = {
 
 curr_path = os.path.dirname(os.path.realpath(__file__))
 
+if platform.system() == "Windows":
+    os.environ['PATH'] += (";" + curr_path)
+
 c_ac = ctypes.cdll.LoadLibrary(
     os.path.join(curr_path, ac_lib[platform.system()]))
 
