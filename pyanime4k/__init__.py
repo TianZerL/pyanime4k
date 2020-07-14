@@ -3,7 +3,6 @@
 """
 Name: PyAnime4K
 Author: TianZerL
-Editor: TianZerL
 """
 
 import pyanime4k.error

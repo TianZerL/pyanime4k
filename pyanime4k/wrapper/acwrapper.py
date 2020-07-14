@@ -3,7 +3,7 @@
 """
 Name: PyAnime4K acwrapper
 Author: TianZerL
-Editor: TianZerL
+Editor: K4Yt3X
 """
 
 import ctypes
@@ -19,14 +19,13 @@ ac_lib = {
 curr_path = os.path.dirname(os.path.realpath(__file__))
 
 if platform.system() == "Windows":
-    os.environ['PATH'] += (";" + curr_path)
+    os.environ["PATH"] += ";" + curr_path
 
-c_ac = ctypes.cdll.LoadLibrary(
-    os.path.join(curr_path, ac_lib[platform.system()]))
+c_ac = ctypes.cdll.LoadLibrary(os.path.join(curr_path, ac_lib[platform.system()]))
 
 
 class ac_parameters(ctypes.Structure):
-    '''
+    """
         typedef struct ac_parameters
         {
                 int passes;
@@ -43,7 +42,8 @@ class ac_parameters(ctypes.Structure):
                 unsigned int maxThreads;
                 ac_bool HDN;
         } ac_parameters;
-    '''
+    """
+
     _fields_ = [
         ("passes", ctypes.c_int),
         ("pushColorCount", ctypes.c_int),
@@ -57,18 +57,19 @@ class ac_parameters(ctypes.Structure):
         ("preFilters", ctypes.c_uint8),
         ("postFilters", ctypes.c_uint8),
         ("maxThreads", ctypes.c_uint),
-        ("HDN", ctypes.c_int)
+        ("HDN", ctypes.c_int),
     ]
 
 
 class ac_version(ctypes.Structure):
-    '''
+    """
         typedef struct ac_version
         {
             char coreVersion[6];
             char wrapperVersion[6];
         } ac_version;
-    '''
+    """
+
     _fields_ = [
         ("coreVersion", ctypes.c_char * 6),
         ("wrapperVersion", ctypes.c_char * 6),
@@ -76,22 +77,10 @@ class ac_version(ctypes.Structure):
 
 
 # ac_processType
-(
-    AC_CPU,
-    AC_GPU,
-    AC_CPUCNN,
-    AC_GPUCNN
-) = (
-    0, 1, 2, 3
-)
+(AC_CPU, AC_GPU, AC_CPUCNN, AC_GPUCNN) = (0, 1, 2, 3)
 
 # ac_bool
-(
-    AC_FALSE,
-    AC_TRUE
-) = (
-    0, 1
-)
+(AC_FALSE, AC_TRUE) = (0, 1)
 
 # ac_error
 (
@@ -106,22 +95,18 @@ class ac_version(ctypes.Structure):
     AC_ERROR_GPU_PROCESS,
     AC_ERROR_SAVE_TO_NULL_POINTER,
     AC_ERROR_NOT_YUV444,
-    AC_ERROR_VIDEO_MODE_UNINIT
-) = (
-    0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11
-)
+    AC_ERROR_VIDEO_MODE_UNINIT,
+) = (0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11)
 
 # ac_codec
-(
-    AC_OTHER,
-    AC_MP4V,
-    AC_DXVA,
-    AC_AVC1,
-    AC_VP09,
-    AC_HEVC,
-    AC_AV01
-) = (
-    -1, 0, 1, 2, 3, 4, 5
+(AC_OTHER, AC_MP4V, AC_DXVA, AC_AVC1, AC_VP09, AC_HEVC, AC_AV01) = (
+    -1,
+    0,
+    1,
+    2,
+    3,
+    4,
+    5,
 )
 
 ac_instance = ctypes.c_void_p

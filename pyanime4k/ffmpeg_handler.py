@@ -3,7 +3,7 @@
 """
 Name: PyAnime4K FFmpeg handler
 Author: TianZerL
-Editor: K4YT3X, TianZerL
+Editor: K4YT3X
 """
 
 # built-in imports
@@ -25,6 +25,7 @@ def migrate_audio_streams(upscaled_video: str, original_video: str, output_path:
     original_audio = original_input.audio
 
     # create output file with selected streams
-    output = ffmpeg.output(upscaled_video, original_audio,
-                           str(output_path.absolute()), c="copy")
+    output = ffmpeg.output(
+        upscaled_video, original_audio, str(output_path.absolute()), c="copy"
+    )
     output.run()

@@ -6,7 +6,6 @@ Author: TianZerL
 Editor: K4YT3X, TianZerL
 """
 
-import platform
 import setuptools
 from pyanime4k.ac import Version
 

@@ -3,7 +3,7 @@
 """
 Name: PyAnime4K upscaler
 Author: TianZerL
-Editor: K4YT3X, TianZerL
+Editor: K4YT3X
 """
 
 # local imports
@@ -15,7 +15,6 @@ from pyanime4k.ac import ProcessorType
 
 # built-in imports
 import pathlib
-import os
 import tempfile
 
 
@@ -55,7 +54,12 @@ def _sanitize_input_paths(input_paths):
     return sanitized_list
 
 
-def show_upscaled_image(source_path: pathlib.Path, parameters: Parameters = Parameters(), GPU_mode: bool = False, ACNet: bool = True):
+def show_upscaled_image(
+    source_path: pathlib.Path,
+    parameters: Parameters = Parameters(),
+    GPU_mode: bool = False,
+    ACNet: bool = True,
+):
     """ display an image processed by Anime4K09 or ACNet
 
     Args:
@@ -69,24 +73,31 @@ def show_upscaled_image(source_path: pathlib.Path, parameters: Parameters = Para
     """
     if GPU_mode:
         if ACNet:
-            ac_object = AC(False, True, type=ProcessorType.GPUCNN,
-                           parameters=parameters)
+            ac_object = AC(
+                False, True, type=ProcessorType.GPUCNN, parameters=parameters
+            )
         else:
-            ac_object = AC(True, False, type=ProcessorType.GPU,
-                           parameters=parameters)
+            ac_object = AC(True, False, type=ProcessorType.GPU, parameters=parameters)
     else:
         if ACNet:
-            ac_object = AC(False, False, type=ProcessorType.CPUCNN,
-                           parameters=parameters)
+            ac_object = AC(
+                False, False, type=ProcessorType.CPUCNN, parameters=parameters
+            )
         else:
-            ac_object = AC(False, False, type=ProcessorType.CPU,
-                           parameters=parameters)
+            ac_object = AC(False, False, type=ProcessorType.CPU, parameters=parameters)
     ac_object.load_image(str(source_path))
     ac_object.process()
     ac_object.show_image()
 
 
-def upscale_images(input_paths: list, output_suffix: str = "_output", output_path: pathlib.Path = None, parameters: Parameters = Parameters(), GPU_mode: bool = False, ACNet: bool = True):
+def upscale_images(
+    input_paths: list,
+    output_suffix: str = "_output",
+    output_path: pathlib.Path = None,
+    parameters: Parameters = Parameters(),
+    GPU_mode: bool = False,
+    ACNet: bool = True,
+):
     """ upscale a list of image files with Anime4K
 
     Args:
@@ -118,24 +129,23 @@ def upscale_images(input_paths: list, output_suffix: str = "_output", output_pat
 
     # else if it already exists but isn't a directory
     elif not output_path.is_dir():
-        raise FileExistsError(
-            'destination path already exists and isn\'t a directory')
+        raise FileExistsError("destination path already exists and isn't a directory")
 
     # create Anime4K object
     if GPU_mode:
         if ACNet:
-            ac_object = AC(False, True, type=ProcessorType.GPUCNN,
-                           parameters=parameters)
+            ac_object = AC(
+                False, True, type=ProcessorType.GPUCNN, parameters=parameters
+            )
         else:
-            ac_object = AC(True, False, type=ProcessorType.GPU,
-                           parameters=parameters)
+            ac_object = AC(True, False, type=ProcessorType.GPU, parameters=parameters)
     else:
         if ACNet:
-            ac_object = AC(False, False, type=ProcessorType.CPUCNN,
-                           parameters=parameters)
+            ac_object = AC(
+                False, False, type=ProcessorType.CPUCNN, parameters=parameters
+            )
         else:
-            ac_object = AC(False, False, type=ProcessorType.CPU,
-                           parameters=parameters)
+            ac_object = AC(False, False, type=ProcessorType.CPU, parameters=parameters)
     # process each of the files in the list
     for path in input_paths:
 
@@ -144,13 +154,23 @@ def upscale_images(input_paths: list, output_suffix: str = "_output", output_pat
         ac_object.process()
 
         # construct destination file path object
-        output_file_path = output_path.joinpath((path.stem + output_suffix + path.suffix))
-            
-        print(f'Saving file to: {output_file_path}')
+        output_file_path = output_path.joinpath(
+            (path.stem + output_suffix + path.suffix)
+        )
+
+        print(f"Saving file to: {output_file_path}")
         ac_object.save_image(str(output_file_path))
 
 
-def upscale_videos(input_paths: list, output_suffix: str = "_output", output_path: pathlib.Path = None, parameters: Parameters = Parameters(), GPU_mode: bool = False, ACNet: bool = True, codec: Codec = Codec.MP4V):
+def upscale_videos(
+    input_paths: list,
+    output_suffix: str = "_output",
+    output_path: pathlib.Path = None,
+    parameters: Parameters = Parameters(),
+    GPU_mode: bool = False,
+    ACNet: bool = True,
+    codec: Codec = Codec.MP4V,
+):
     """ upscale a list of video files with Anime4k
 
     Args:
@@ -183,8 +203,7 @@ def upscale_videos(input_paths: list, output_suffix: str = "_output", output_pat
 
     # else if it already exists but isn't a directory
     elif not output_path.is_dir():
-        raise FileExistsError(
-            'destination path already exists and isn\'t a directory')
+        raise FileExistsError("destination path already exists and isn't a directory")
 
     # set parameters to video mode
     parameters.videoMode = True
@@ -192,25 +211,25 @@ def upscale_videos(input_paths: list, output_suffix: str = "_output", output_pat
     # create anime4k object
     if GPU_mode:
         if ACNet:
-            ac_object = AC(False, True, type=ProcessorType.GPUCNN,
-                           parameters=parameters)
+            ac_object = AC(
+                False, True, type=ProcessorType.GPUCNN, parameters=parameters
+            )
         else:
-            ac_object = AC(True, False, type=ProcessorType.GPU,
-                           parameters=parameters)
+            ac_object = AC(True, False, type=ProcessorType.GPU, parameters=parameters)
     else:
         if ACNet:
-            ac_object = AC(False, False, type=ProcessorType.CPUCNN,
-                           parameters=parameters)
+            ac_object = AC(
+                False, False, type=ProcessorType.CPUCNN, parameters=parameters
+            )
         else:
-            ac_object = AC(False, False, type=ProcessorType.CPU,
-                           parameters=parameters)
+            ac_object = AC(False, False, type=ProcessorType.CPU, parameters=parameters)
 
     # process each of the files in the list
     for path in input_paths:
 
         # create temporary directory to save the upscaled video
         temporary_directory = pathlib.Path(tempfile.mkdtemp())
-        temporary_video_file_path = temporary_directory.joinpath('temp.mp4')
+        temporary_video_file_path = temporary_directory.joinpath("temp.mp4")
 
         # process and save video file to temp/temp.mp4
         ac_object.load_video(str(path))
@@ -218,6 +237,8 @@ def upscale_videos(input_paths: list, output_suffix: str = "_output", output_pat
         ac_object.process_with_progress()
         ac_object.save_video()
 
-        ffmpeg_handler.migrate_audio_streams(upscaled_video=temporary_video_file_path,
-                                             original_video=path,
-                                             output_path=(output_path.joinpath(path.stem + output_suffix + path.suffix)))
+        ffmpeg_handler.migrate_audio_streams(
+            upscaled_video=temporary_video_file_path,
+            original_video=path,
+            output_path=(output_path.joinpath(path.stem + output_suffix + path.suffix)),
+        )
