@@ -50,7 +50,7 @@ images = [
 ]
 
 pyanime4k.upscale_images(
-    inpuat_paths=images,
+    input_paths=images,
     output_path=pathlib.Path('./output')
 )
 ```
