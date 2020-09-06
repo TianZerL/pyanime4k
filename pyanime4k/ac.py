@@ -113,6 +113,8 @@ class Parameters(object):
 class ProcessorType(object):
     """
     processor type of AC
+
+    AUTO will AC set to GPUCNN and initialize GPUCNN if available, otherwise set it to CPUCNN
     """
 
     CPU = AC_CPU
