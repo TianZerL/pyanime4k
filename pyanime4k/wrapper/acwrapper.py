@@ -27,30 +27,32 @@ else:
 
 class ac_parameters(ctypes.Structure):
     """
-        typedef struct ac_parameters
-        {
-                int passes;
-                int pushColorCount;
-                float strengthColor;
-                float strengthGradient;
-                float zoomFactor;
-                ac_bool fastMode;
-                ac_bool videoMode;
-                ac_bool preprocessing;
-                ac_bool postprocessing;
-                unsigned char preFilters;
-                unsigned char postFilters;
-                unsigned int maxThreads;
-                ac_bool HDN;
-        } ac_parameters;
+    typedef struct ac_parameters
+    {
+        int passes;
+        int pushColorCount;
+        double strengthColor;
+        double strengthGradient;
+        double zoomFactor;
+        ac_bool fastMode;
+        ac_bool videoMode;
+        ac_bool preprocessing;
+        ac_bool postprocessing;
+        unsigned char preFilters;
+        unsigned char postFilters;
+        unsigned int maxThreads;
+        ac_bool HDN;
+        int HDNLevel;
+        ac_bool alpha;
+    } ac_parameters;
     """
 
     _fields_ = [
         ("passes", ctypes.c_int),
         ("pushColorCount", ctypes.c_int),
-        ("strengthColor", ctypes.c_float),
-        ("strengthGradient", ctypes.c_float),
-        ("zoomFactor", ctypes.c_float),
+        ("strengthColor", ctypes.c_double),
+        ("strengthGradient", ctypes.c_double),
+        ("zoomFactor", ctypes.c_double),
         ("fastMode", ctypes.c_int),
         ("videoMode", ctypes.c_int),
         ("preprocessing", ctypes.c_int),
@@ -59,16 +61,18 @@ class ac_parameters(ctypes.Structure):
         ("postFilters", ctypes.c_uint8),
         ("maxThreads", ctypes.c_uint),
         ("HDN", ctypes.c_int),
+        ("HDNLevel", ctypes.c_int),
+        ("alpha", ctypes.c_int),
     ]
 
 
 class ac_version(ctypes.Structure):
     """
-        typedef struct ac_version
-        {
-            char coreVersion[6];
-            char wrapperVersion[6];
-        } ac_version;
+    typedef struct ac_version
+    {
+        char coreVersion[6];
+        char wrapperVersion[6];
+    } ac_version;
     """
 
     _fields_ = [
@@ -96,8 +100,9 @@ class ac_version(ctypes.Structure):
     AC_ERROR_GPU_PROCESS,
     AC_ERROR_SAVE_TO_NULL_POINTER,
     AC_ERROR_NOT_YUV444,
+    AC_ERROR_YUV444_AND_RGB32_AT_SAME_TIME,
     AC_ERROR_VIDEO_MODE_UNINIT,
-) = (0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11)
+) = (0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12)
 
 # ac_codec
 (AC_OTHER, AC_MP4V, AC_DXVA, AC_AVC1, AC_VP09, AC_HEVC, AC_AV01) = (

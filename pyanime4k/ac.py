@@ -22,12 +22,20 @@ import multiprocessing
 
 
 class Version(object):
+    pyanime4k = "2.3.0"
+
     def __init__(self):
         ac_version = c_ac.acGetVersion()
         self.core = str(ac_version.coreVersion, "utf-8")
         self.wrapper = str(ac_version.wrapperVersion, "utf-8")
 
-    pyanime4k = "2.2.7"
+    def __str__(self):
+        return (
+            f"Version information:\n"
+            f"  pyanime4k: {self.pyanime4k}\n"
+            f"  core:      {self.core}\n"
+            f"  C wrapper: {self.wrapper}"
+        )
 
 
 class Parameters(object):
@@ -45,6 +53,8 @@ class Parameters(object):
         self.postFilters = 40
         self.maxThreads = multiprocessing.cpu_count()
         self.HDN = False
+        self.HDNLevel = 1
+        self.alpha = False
 
     def reset(self):
         self.passes = 2
@@ -60,6 +70,8 @@ class Parameters(object):
         self.postFilters = 40
         self.maxThreads = multiprocessing.cpu_count()
         self.HDN = False
+        self.HDNLevel = 1
+        self.alpha = False
 
     def print_info(self):
         print(
@@ -75,7 +87,9 @@ class Parameters(object):
             "preFilters:        %d\n"
             "postFilters:       %d\n"
             "maxThreads:        %d\n"
-            "HDN:               %r"
+            "HDN:               %r\n"
+            "HDNLevel           %r\n"
+            "alpha              %r"
             % (
                 self.passes,
                 self.pushColorCount,
@@ -90,6 +104,8 @@ class Parameters(object):
                 self.postFilters,
                 self.maxThreads,
                 self.HDN,
+                self.HDNLevel,
+                self.alpha,
             )
         )
 
@@ -127,9 +143,9 @@ class AC(object):
         c_struct = ac_parameters()
         c_struct.passes = ctypes.c_int(parameters.passes)
         c_struct.pushColorCount = ctypes.c_int(parameters.pushColorCount)
-        c_struct.strengthColor = ctypes.c_float(parameters.strengthColor)
-        c_struct.strengthGradient = ctypes.c_float(parameters.strengthGradient)
-        c_struct.zoomFactor = ctypes.c_float(parameters.zoomFactor)
+        c_struct.strengthColor = ctypes.c_double(parameters.strengthColor)
+        c_struct.strengthGradient = ctypes.c_double(parameters.strengthGradient)
+        c_struct.zoomFactor = ctypes.c_double(parameters.zoomFactor)
         c_struct.fastMode = ctypes.c_int(parameters.fastMode)
         c_struct.videoMode = ctypes.c_int(parameters.videoMode)
         c_struct.preprocessing = ctypes.c_int(parameters.preprocessing)
@@ -138,12 +154,14 @@ class AC(object):
         c_struct.postFilters = ctypes.c_uint8(parameters.postFilters)
         c_struct.maxThreads = ctypes.c_uint(parameters.maxThreads)
         c_struct.HDN = ctypes.c_int(parameters.HDN)
+        c_struct.HDNLevel = ctypes.c_int(parameters.HDNLevel)
+        c_struct.alpha = ctypes.c_int(parameters.alpha)
         return c_struct
 
     def __init__(
         self,
-        initGPU: bool = True,
-        initGPUCNN: bool = True,
+        initGPU: bool = False,
+        initGPUCNN: bool = False,
         platformID: int = 0,
         deviceID: int = 0,
         parameters: Parameters = Parameters(),
