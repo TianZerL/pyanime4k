@@ -16,7 +16,7 @@ from pyanime4k.ac import ProcessorType
 # built-in imports
 import pathlib
 import tempfile
-
+import os
 
 def _sanitize_input_paths(input_paths):
     """ sanitize input file paths
@@ -242,3 +242,5 @@ def upscale_videos(
             original_video=path,
             output_path=(output_path.joinpath(path.stem + output_suffix + path.suffix)),
         )
+        #clean up temp video after we're done with it
+        os.remove(temporary_video_file_path) 
