@@ -6,11 +6,12 @@ Author: TianZerL
 Editor: K4YT3X, TianZerL
 """
 
-import setuptools
+import setuptools, os
 from pyanime4k.ac import Version
 
+curr_path = os.path.dirname(os.path.realpath(__file__))
 
-with open("README.md", "r") as f:
+with open(os.path.join(curr_path, "README.md"), "r") as f:
     long_description = f.read()
 
 setuptools.setup(
