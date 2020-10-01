@@ -5,7 +5,7 @@
 if [ ! -z "$1" ]; then
     export INSTALLATION_PATH=$1
 else
-    export INSTALLATION_PATH="$HOME/pyanime4k_wheel"
+    export INSTALLATION_PATH="$HOME/pyanime4k_wheel/"
 fi
 
 TEMP="/tmp/pyanime4k"
@@ -36,4 +36,5 @@ mv -v $TEMP/pyanime4k/dist $INSTALLATION_PATH
 rm -rf $TEMP
 
 echo "All finished."
-echo "Use pip install $(ls $INSTALLATION_PATH) to install pyanime4k"
+echo "Your wheel file of pyanime4k was stored in $INSTALLATION_PATH"
+echo "Use pip install $INSTALLATION_PATH$(ls $INSTALLATION_PATH) to install it"
