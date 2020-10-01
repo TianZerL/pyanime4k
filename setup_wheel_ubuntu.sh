@@ -26,8 +26,7 @@ mv -v $TEMP/anime4kcpp/build/bin/libac.so $TEMP/pyanime4k/pyanime4k/wrapper
 
 cd $TEMP/pyanime4k
 
-pip install -r requirements.txt
-
+pip3 install -r requirements.txt
 pip3 install setuptools
 pip3 install wheel
 
