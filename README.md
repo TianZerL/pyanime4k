@@ -3,15 +3,20 @@
 PyAnime4K is a simple, fast and powerful Anime4K Python implementation.
 
 ## Installation
-
-PyAnime4K can be installed easily through `pip`(For Windows and Linux).
+### Pip
+PyAnime4K can be installed easily through `pip`.(recommended for Windows)
 
 ```shell
 pip install pyanime4k
 ```
+### Shell script
+For Ubuntu you can also use `setup_wheel_ubuntu.sh` to build wheel file and install it (especially recommended for Google Colab):
 
-***Notice: pip Linux version built on Ubuntu14.04, should works in most distributions, make sure you have installed libgtk2.0 and zlib first***
-
+```
+# For Google Colab, you need to add "!" at the beginning
+# "setup_wheel_ubuntu.sh" need root permission for installing dependency library by apt
+wget https://github.com/TianZerL/pyanime4k/raw/master/setup_wheel_ubuntu.sh && chmod 777 setup_wheel_ubuntu.sh && ./setup_wheel_ubuntu.sh
+```
 ## Manual installation
 
 ### Compile Anime4KCPP for pyanime4k
