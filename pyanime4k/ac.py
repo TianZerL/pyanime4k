@@ -22,7 +22,7 @@ import multiprocessing
 
 
 class Version(object):
-    pyanime4k = "2.3.0"
+    pyanime4k = "2.4.0"
 
     def __init__(self):
         ac_version = c_ac.acGetVersion()
@@ -558,3 +558,20 @@ class AC(object):
         self.load_image_from_numpy(np_array, input_type)
         self.process()
         return self.save_image_to_numpy()
+
+    @staticmethod
+    def do_benchmark(pID: int, dID: int) -> (float, float):
+        """
+        Do benchmark and return (cpu_score, gpu_score)
+        """
+        c_cpu_score = ctypes.c_double()
+        c_gpu_score = ctypes.c_double()
+
+        flag = c_ac.acBenchmark(
+            ctypes.c_uint(pID),
+            ctypes.c_uint(dID),
+            ctypes.pointer(c_cpu_score),
+            ctypes.pointer(c_gpu_score),
+        )
+
+        return c_cpu_score.value, c_gpu_score.value
