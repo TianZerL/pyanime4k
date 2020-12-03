@@ -90,8 +90,11 @@ pyanime4k.upscale_videos(
 from pyanime4k import ac
 import cv2
 
-video = cv2.VideoCapture(r"D:\Temp\anime4k\P1-1.m4v")
-a = ac.AC()
+video = cv2.VideoCapture(r"F:\Temp\Anime4K\P1-1.m4v")
+a = ac.AC(
+    managerList=ac.ManagerList([ac.OpenCLACNetManager(pID=0, dID=0)]),
+    type=ac.ProcessorType.OpenCL_ACNet
+)
 while True:
     v,f = video.read()
     if not v:
@@ -100,7 +103,6 @@ while True:
     f = a.proccess_image_with_numpy(f)
     cv2.imshow("video", f)
     cv2.waitKey(1)
-
 
 ```
 
@@ -115,16 +117,20 @@ from pyanime4k import ac
 ac.AC.list_GPUs()
 
 # check GPU support
-flag, info = ac.AC.check_GPU_support(pID=1, dID=0)
+flag, info = ac.AC.check_GPU_support(GPGPU=ac.GPGPUModel.AC_OpenCL, pID=1, dID=0)
 
 # init AC core with pID and dID
 if flag:
-    a = ac.AC(platformID=1, deviceID=0)
+    a = ac.AC(
+        managerList=ac.ManagerList([ac.OpenCLACNetManager(pID=0, dID=0)]),
+        type=ac.ProcessorType.OpenCL_ACNet
+    )
 
+# print GPU information
 print(info)
 
-# to check the current GPU
-print(a.get_current_GPU_info())
+# or to check the current processor information
+print(a.get_processor_info())
 
 ```
 
@@ -140,7 +146,10 @@ parameters = ac.Parameters()
 # enable HDN for ACNet
 parameters.HDN = True
 
-a = ac.AC(initGPUCNN = True, parameters = parameters, type=ac.ProcessorType.GPUCNN)
+a = ac.AC(
+    managerList=ac.ManagerList([ac.OpenCLACNetManager(pID=0, dID=0)]),
+    type=ac.ProcessorType.OpenCL_ACNet
+)
 
 # load image from file
 a.load_image(r"D:\Temp\anime4k\p1.png")
@@ -230,9 +239,6 @@ a.process_with_progress_callback(print_progress)
 # save video to file
 a.save_video()
 
-# save video to file
-a.save_video()
-
 # merge audio and auto delete tmp file
 pyanime4k.migrate_audio_streams("output_tmp.mp4",r"D:\Temp\anime4k\P1-1.m4v","output.mp4")
 ```
@@ -259,7 +265,10 @@ videoWriter = cv2.VideoWriter(
 )
 
 # init Anime4KCPP
-a = ac.AC()
+a = ac.AC(
+    managerList=ac.ManagerList([ac.OpenCLACNetManager(pID=0, dID=0)]),
+    type=ac.ProcessorType.OpenCL_ACNet
+)
 
 # frame queue
 q = queue.Queue(12)

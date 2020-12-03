@@ -576,10 +576,10 @@ class AC(object):
         return the current processor infomation
         """
         c_length = ctypes.c_size_t()
-        c_ac.acGetProcessInfo(self.ac_object ,None, ctypes.pointer(c_length))
+        c_ac.acGetProcessorInfo(self.ac_object ,None, ctypes.pointer(c_length))
         length = c_length.value
         info = (ctypes.c_char * length)()
-        c_ac.acGetProcessInfo(self.ac_object ,info, None)
+        c_ac.acGetProcessorInfo(self.ac_object ,info, None)
         return ctypes.string_at(info).decode()
 
     def load_image_from_numpy(self, np_array: np.array, input_type: int = AC_INPUT_RGB):

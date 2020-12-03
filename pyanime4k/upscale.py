@@ -11,15 +11,16 @@ from pyanime4k import ffmpeg_handler
 from pyanime4k.ac import AC
 from pyanime4k.ac import Parameters
 from pyanime4k.ac import Codec
-from pyanime4k.ac import ProcessorType
+from pyanime4k import ac
 
 # built-in imports
 import pathlib
 import tempfile
 import os
 
+
 def _sanitize_input_paths(input_paths):
-    """ sanitize input file paths
+    """sanitize input file paths
 
     Args:
         input_paths (any): input paths variable to sanitize
@@ -60,7 +61,7 @@ def show_upscaled_image(
     GPU_mode: bool = False,
     ACNet: bool = True,
 ):
-    """ display an image processed by Anime4K09 or ACNet
+    """display an image processed by Anime4K09 or ACNet
 
     Args:
         source_path: input file path.
@@ -74,17 +75,29 @@ def show_upscaled_image(
     if GPU_mode:
         if ACNet:
             ac_object = AC(
-                False, True, type=ProcessorType.GPUCNN, parameters=parameters
+                managerList=ac.ManagerList([ac.OpenCLACNetManager(pID=0, dID=0)]),
+                parameters=parameters,
+                type=ac.ProcessorType.OpenCL_ACNet,
             )
         else:
-            ac_object = AC(True, False, type=ProcessorType.GPU, parameters=parameters)
+            ac_object = AC(
+                managerList=ac.ManagerList([ac.OpenCLACNetManager(pID=0, dID=0)]),
+                parameters=parameters,
+                type=ac.ProcessorType.OpenCL_Anime4K09,
+            )
     else:
         if ACNet:
             ac_object = AC(
-                False, False, type=ProcessorType.CPUCNN, parameters=parameters
+                managerList=None,
+                parameters=parameters,
+                type=ac.ProcessorType.CPU_ACNet,
             )
         else:
-            ac_object = AC(False, False, type=ProcessorType.CPU, parameters=parameters)
+            ac_object = AC(
+                managerList=None,
+                parameters=parameters,
+                type=ac.ProcessorType.CPU_Anime4K09,
+            )
     ac_object.load_image(str(source_path))
     ac_object.process()
     ac_object.show_image()
@@ -98,7 +111,7 @@ def upscale_images(
     GPU_mode: bool = False,
     ACNet: bool = True,
 ):
-    """ upscale a list of image files with Anime4K
+    """upscale a list of image files with Anime4K
 
     Args:
         input_paths (list): list of input file paths
@@ -135,17 +148,30 @@ def upscale_images(
     if GPU_mode:
         if ACNet:
             ac_object = AC(
-                False, True, type=ProcessorType.GPUCNN, parameters=parameters
+                managerList=ac.ManagerList([ac.OpenCLACNetManager(pID=0, dID=0)]),
+                parameters=parameters,
+                type=ac.ProcessorType.OpenCL_ACNet,
             )
         else:
-            ac_object = AC(True, False, type=ProcessorType.GPU, parameters=parameters)
+            ac_object = AC(
+                managerList=ac.ManagerList([ac.OpenCLACNetManager(pID=0, dID=0)]),
+                parameters=parameters,
+                type=ac.ProcessorType.OpenCL_Anime4K09,
+            )
     else:
         if ACNet:
             ac_object = AC(
-                False, False, type=ProcessorType.CPUCNN, parameters=parameters
+                managerList=None,
+                parameters=parameters,
+                type=ac.ProcessorType.CPU_ACNet,
             )
         else:
-            ac_object = AC(False, False, type=ProcessorType.CPU, parameters=parameters)
+            ac_object = AC(
+                managerList=None,
+                parameters=parameters,
+                type=ac.ProcessorType.CPU_Anime4K09,
+            )
+
     # process each of the files in the list
     for path in input_paths:
 
@@ -171,7 +197,7 @@ def upscale_videos(
     ACNet: bool = True,
     codec: Codec = Codec.MP4V,
 ):
-    """ upscale a list of video files with Anime4k
+    """upscale a list of video files with Anime4k
 
     Args:
         input_paths (list): list of input file paths
@@ -212,17 +238,29 @@ def upscale_videos(
     if GPU_mode:
         if ACNet:
             ac_object = AC(
-                False, True, type=ProcessorType.GPUCNN, parameters=parameters
+                managerList=ac.ManagerList([ac.OpenCLACNetManager(pID=0, dID=0)]),
+                parameters=parameters,
+                type=ac.ProcessorType.OpenCL_ACNet,
             )
         else:
-            ac_object = AC(True, False, type=ProcessorType.GPU, parameters=parameters)
+            ac_object = AC(
+                managerList=ac.ManagerList([ac.OpenCLACNetManager(pID=0, dID=0)]),
+                parameters=parameters,
+                type=ac.ProcessorType.OpenCL_Anime4K09,
+            )
     else:
         if ACNet:
             ac_object = AC(
-                False, False, type=ProcessorType.CPUCNN, parameters=parameters
+                managerList=None,
+                parameters=parameters,
+                type=ac.ProcessorType.CPU_ACNet,
             )
         else:
-            ac_object = AC(False, False, type=ProcessorType.CPU, parameters=parameters)
+            ac_object = AC(
+                managerList=None,
+                parameters=parameters,
+                type=ac.ProcessorType.CPU_Anime4K09,
+            )
 
     # process each of the files in the list
     for path in input_paths:
@@ -242,5 +280,5 @@ def upscale_videos(
             original_video=path,
             output_path=(output_path.joinpath(path.stem + output_suffix + path.suffix)),
         )
-        #clean up temp video after we're done with it
-        os.remove(temporary_video_file_path) 
+        # clean up temp video after we're done with it
+        os.remove(temporary_video_file_path)
