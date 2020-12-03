@@ -81,8 +81,92 @@ class ac_version(ctypes.Structure):
     ]
 
 
+class ac_OpenCLAnime4K09Data(ctypes.Structure):
+    """
+    typedef struct ac_OpenCLAnime4K09Data
+    {
+        unsigned int pID;
+        unsigned int dID;
+        int OpenCLQueueNum;
+        ac_bool OpenCLParallelIO;
+    } ac_OpenCLAnime4K09Data;
+    """
+
+    _fields_ = [
+        ("pID", ctypes.c_uint),
+        ("dID", ctypes.c_uint),
+        ("OpenCLQueueNum", ctypes.c_int),
+        ("OpenCLParallelIO", ctypes.c_int),
+    ]
+
+
+class ac_OpenCLACNetData(ctypes.Structure):
+    """
+    typedef struct ac_OpenCLACNetData
+    {
+        unsigned int pID;
+        unsigned int dID;
+        int OpenCLQueueNum;
+        ac_bool OpenCLParallelIO;
+        ac_CNNType CNNType;
+    } ac_OpenCLACNetData;
+    """
+
+    _fields_ = [
+        ("pID", ctypes.c_uint),
+        ("dID", ctypes.c_uint),
+        ("OpenCLQueueNum", ctypes.c_int),
+        ("OpenCLParallelIO", ctypes.c_int),
+        ("CNNType", ctypes.c_int),
+    ]
+
+
+class ac_CUDAData(ctypes.Structure):
+    """
+    typedef struct ac_CUDAData
+    {
+        unsigned int dID;
+    } ac_CUDAData;
+    """
+
+    _fields_ = [
+        ("dID", ctypes.c_uint),
+    ]
+
+
+class ac_managerData(ctypes.Structure):
+    """
+    typedef struct ac_managerData
+    {
+        ac_OpenCLAnime4K09Data* OpenCLAnime4K09Data;
+        ac_OpenCLACNetData* OpenCLACNetData;
+        ac_CUDAData* CUDAData;
+    } ac_managerData;
+    """
+
+    _fields_ = [
+        ("OpenCLAnime4K09Data", ctypes.POINTER(ac_OpenCLAnime4K09Data)),
+        ("OpenCLACNetData", ctypes.POINTER(ac_OpenCLACNetData)),
+        ("CUDAData", ctypes.POINTER(ac_CUDAData)),
+    ]
+
+
 # ac_processType
-(AC_CPU, AC_GPU, AC_CPUCNN, AC_GPUCNN) = (0, 1, 2, 3)
+(
+    AC_CPU_Anime4K09,
+    AC_CPU_ACNet,
+    AC_OpenCL_Anime4K09,
+    AC_OpenCL_ACNet,
+    AC_Cuda_Anime4K09,
+    AC_Cuda_ACNet,
+) = (0, 1, 2, 3, 4, 5)
+
+
+class ac_manager(object):
+    AC_Manager_OpenCL_Anime4K09 = 1 << 0
+    AC_Manager_OpenCL_ACNet = 1 << 1
+    AC_Manager_Cuda = 1 << 2
+
 
 # ac_bool
 (AC_FALSE, AC_TRUE) = (0, 1)
@@ -92,6 +176,7 @@ class ac_version(ctypes.Structure):
     AC_OK,
     AC_ERROR_NULL_INSTANCE,
     AC_ERROR_NULL_PARAMETERS,
+    AC_ERROR_NULL_Data,
     AC_ERROR_INIT_GPU,
     AC_ERROR_PORCESSOR_TYPE,
     AC_ERROR_LOAD_IMAGE,
@@ -101,8 +186,9 @@ class ac_version(ctypes.Structure):
     AC_ERROR_SAVE_TO_NULL_POINTER,
     AC_ERROR_NOT_YUV444,
     AC_ERROR_YUV444_AND_RGB32_AT_SAME_TIME,
+    AC_ERROR_CUDA_NOT_SUPPORTED,
     AC_ERROR_VIDEO_MODE_UNINIT,
-) = (0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12)
+) = (0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14)
 
 # ac_codec
 (AC_OTHER, AC_MP4V, AC_DXVA, AC_AVC1, AC_VP09, AC_HEVC, AC_AV01) = (
@@ -119,6 +205,8 @@ ac_instance = ctypes.c_void_p
 
 c_ac.acGetVersion.restype = ac_version
 
-c_ac.acGetInstance.restype = ac_instance
+c_ac.acGetInstance2.restype = ac_instance
 
 c_ac.acGetResultDataLength.restype = ctypes.c_size_t
+
+c_ac.acBenchmark2.restype = ctypes.c_double

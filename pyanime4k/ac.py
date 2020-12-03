@@ -22,7 +22,7 @@ import multiprocessing
 
 
 class Version(object):
-    pyanime4k = "2.4.0"
+    pyanime4k = "2.5.0"
 
     def __init__(self):
         ac_version = c_ac.acGetVersion()
@@ -117,13 +117,21 @@ class ProcessorType(object):
     AUTO will AC set to GPUCNN and initialize GPUCNN if available, otherwise set it to CPUCNN
     """
 
-    CPU = AC_CPU
-    GPU = AC_GPU
-    CPUCNN = AC_CPUCNN
-    GPUCNN = AC_GPUCNN
-    AUTO = -1
+    CPU_Anime4K09 = AC_CPU_Anime4K09
+    CPU_ACNet = AC_CPU_ACNet
+    OpenCL_Anime4K09 = AC_OpenCL_Anime4K09
+    OpenCL_ACNet = AC_OpenCL_ACNet
+    Cuda_Anime4K09 = AC_Cuda_Anime4K09
+    Cuda_ACNet = AC_Cuda_ACNet
 
-    type_code_str = {CPU: "CPU", GPU: "GPU", CPUCNN: "CPUCNN", GPUCNN: "GPUCNN"}
+    type_code_str = {
+        CPU_Anime4K09: " CPU_Anime4K09",
+        CPU_ACNet: "CPU_ACNet",
+        OpenCL_Anime4K09: "OpenCL_Anime4K09",
+        OpenCL_ACNet: "OpenCL_ACNet",
+        Cuda_Anime4K09: "Cuda_Anime4K09",
+        Cuda_ACNet: "Cuda_ACNet",
+    }
 
 
 class Codec(object):
@@ -134,6 +142,104 @@ class Codec(object):
     VP09 = AC_VP09
     HEVC = AC_HEVC
     AV01 = AC_AV01
+
+
+class CNNType(object):
+    AC_Default = 0
+    AC_ACNetHDNL0 = 1
+    AC_ACNetHDNL1 = 2
+    AC_ACNetHDNL2 = 3
+    AC_ACNetHDNL3 = 4
+
+
+class GPGPUModel(object):
+    AC_CUDA = 0
+    AC_OpenCL = 1
+
+
+class OpenCLAnime4K09Manager(object):
+    def __init__(
+        self,
+        pID: int = 0,
+        dID: int = 0,
+        OpenCLQueueNum: int = 4,
+        OpenCLParallelIO: bool = False,
+    ):
+        self.pID = pID
+        self.dID = dID
+        self.OpenCLQueueNum = OpenCLQueueNum
+        self.OpenCLParallelIO = OpenCLParallelIO
+
+    def _get_manager_data(self):
+        manager_data = ac_OpenCLAnime4K09Data()
+        manager_data.pID = ctypes.c_uint(self.pID)
+        manager_data.dID = ctypes.c_uint(self.dID)
+        manager_data.OpenCLQueueNum = ctypes.c_int(self.OpenCLQueueNum)
+        manager_data.OpenCLParallelIO = ctypes.c_int(self.OpenCLParallelIO)
+        return manager_data
+
+
+class OpenCLACNetManager(object):
+    def __init__(
+        self,
+        pID: int = 0,
+        dID: int = 0,
+        CNN: int = CNNType.AC_Default,
+        OpenCLQueueNum: int = 4,
+        OpenCLParallelIO: bool = False,
+    ):
+        self.pID = pID
+        self.dID = dID
+        self.CNNType = CNN
+        self.OpenCLQueueNum = OpenCLQueueNum
+        self.OpenCLParallelIO = OpenCLParallelIO
+
+    def _get_manager_data(self):
+        manager_data = ac_OpenCLACNetData()
+        manager_data.pID = ctypes.c_uint(self.pID)
+        manager_data.dID = ctypes.c_uint(self.dID)
+        manager_data.OpenCLQueueNum = ctypes.c_int(self.OpenCLQueueNum)
+        manager_data.OpenCLParallelIO = ctypes.c_int(self.OpenCLParallelIO)
+        manager_data.CNNType = ctypes.c_int(self.CNNType)
+        return manager_data
+
+
+class CUDAManager(object):
+    def __init__(self, dID: int = 0):
+        self.dID = dID
+
+    def _get_manager_data(self):
+        manager_data = ac_CUDAData()
+        manager_data.dID = ctypes.c_uint(self.dID)
+        return manager_data
+
+
+class ManagerList(object):
+    def __init__(self, managerList: list):
+        self._manager_data = ac_managerData()
+        self._manager_mask = 0
+        for manager in managerList:
+            if isinstance(manager, OpenCLAnime4K09Manager):
+                self._manager_mask |= ac_manager.AC_Manager_OpenCL_Anime4K09
+                self._manager_data.OpenCLAnime4K09Data = ctypes.pointer(
+                    manager._get_manager_data()
+                )
+            elif isinstance(manager, OpenCLACNetManager):
+                self._manager_mask |= ac_manager.AC_Manager_OpenCL_ACNet
+                self._manager_data.OpenCLACNetData = ctypes.pointer(
+                    manager._get_manager_data()
+                )
+            elif isinstance(manager, CUDAManager):
+                self._manager_mask |= ac_manager.AC_Manager_Cuda
+                self._manager_data.CUDAData = ctypes.pointer(
+                    manager._get_manager_data()
+                )
+
+    def get_managers(self):
+        return self._manager_mask
+
+    def get_manager_data(self):
+        return self._manager_data
 
 
 class AC(object):
@@ -162,53 +268,33 @@ class AC(object):
 
     def __init__(
         self,
-        initGPU: bool = False,
-        initGPUCNN: bool = False,
-        platformID: int = 0,
-        deviceID: int = 0,
+        managerList: ManagerList = None,
         parameters: Parameters = Parameters(),
-        type: ProcessorType = ProcessorType.AUTO,
+        type: ProcessorType = ProcessorType.CPU_ACNet,
     ):
-        if type == ProcessorType.AUTO:
-            # init it to CPUCNN
-            type = ProcessorType.CPUCNN
-            initGPU = False
-            initGPUCNN = False
-            # Test all GPUs
-            _, platforms, devices = AC.get_GPU_list()
-            for p_id in range(platforms):
-                for d_id in range(devices[p_id]):
-                    support_flag = AC.check_GPU_support(p_id, d_id)
-                    if support_flag:
-                        type = ProcessorType.GPUCNN
-                        initGPUCNN = True
-
-        ac_parameters_p = ctypes.byref(self.__get_c_parameters(parameters))
         err = ctypes.c_int(AC_OK)
-        self.ac_object = c_ac.acGetInstance(
-            ctypes.c_int(initGPU),
-            ctypes.c_int(initGPUCNN),
-            ctypes.c_uint(platformID),
-            ctypes.c_uint(deviceID),
-            ac_parameters_p,
+        self.ac_object = c_ac.acGetInstance2(
+            ctypes.c_uint(managerList.get_managers() if managerList is not None else 0),
+            ctypes.byref(managerList.get_manager_data())
+            if managerList is not None
+            else None,
+            ctypes.byref(self.__get_c_parameters(parameters)),
             ctypes.c_int(type),
             ctypes.pointer(err),
         )
         if err.value != AC_OK:
             raise ACError(err.value)
+
         self.parameters = parameters
         self.ac_object = ctypes.c_void_p(self.ac_object)
 
         self.input_type = AC_INPUT_BGR
         self.processor_type = type
-        self.GPUID = (platformID, deviceID)
 
         self.process_status = AC_PROCESS_STOP
 
     def __del__(self):
-        c_ac.acFreeInstance(
-            self.ac_object, ctypes.c_int(AC_TRUE), ctypes.c_int(AC_TRUE)
-        )
+        c_ac.acFreeInstance2(self.ac_object)
 
     @staticmethod
     def get_version() -> Version:
@@ -230,8 +316,9 @@ class AC(object):
         self.parameters.videoMode = flag
 
     def set_arguments(self, parameters: Parameters):
-        ac_parameters_p = ctypes.byref(self.__get_c_parameters(parameters))
-        err = c_ac.acSetArguments(self.ac_object, ac_parameters_p)
+        err = c_ac.acSetArguments(
+            self.ac_object, ctypes.byref(self.__get_c_parameters(parameters))
+        )
         if err != AC_OK:
             raise ACError(err)
 
@@ -444,18 +531,22 @@ class AC(object):
         print(ctypes.string_at(info).decode())
 
     @staticmethod
-    def check_GPU_support(pID: int, dID: int) -> (bool, str):
+    def check_GPU_support(GPGPU: GPGPUModel, pID: int = 0, dID: int = 0) -> (bool, str):
         """
         check the specified GPU and return info
         """
         c_length = ctypes.c_size_t()
-        flag = c_ac.acCheckGPUSupport(
-            ctypes.c_uint(pID), ctypes.c_uint(dID), None, ctypes.pointer(c_length)
+        c_ac.acCheckGPUSupport2(
+            ctypes.c_int(GPGPU),
+            ctypes.c_uint(pID),
+            ctypes.c_uint(dID),
+            None,
+            ctypes.pointer(c_length),
         )
         length = c_length.value
         info = (ctypes.c_char * length)()
-        flag = c_ac.acCheckGPUSupport(
-            ctypes.c_uint(pID), ctypes.c_uint(dID), info, None
+        flag = c_ac.acCheckGPUSupport2(
+            ctypes.c_int(GPGPU), ctypes.c_uint(pID), ctypes.c_uint(dID), info, None
         )
         return bool(flag), ctypes.string_at(info).decode()
 
@@ -480,12 +571,16 @@ class AC(object):
             [devices[i] for i in range(platforms)],
         )
 
-    def get_current_GPU_info(self) -> str:
+    def get_processor_info(self) -> str:
         """
-        return the current GPU info string
+        return the current processor infomation
         """
-        _, info = AC.check_GPU_support(*self.GPUID)
-        return info
+        c_length = ctypes.c_size_t()
+        c_ac.acGetProcessInfo(self.ac_object ,None, ctypes.pointer(c_length))
+        length = c_length.value
+        info = (ctypes.c_char * length)()
+        c_ac.acGetProcessInfo(self.ac_object ,info, None)
+        return ctypes.string_at(info).decode()
 
     def load_image_from_numpy(self, np_array: np.array, input_type: int = AC_INPUT_RGB):
         """
@@ -501,7 +596,7 @@ class AC(object):
 
         rows, cols, _ = np_array.shape
         data = np_array.ctypes.data_as(ctypes.POINTER(ctypes.c_ubyte))
-        err = c_ac.acLoadImageRGBBytes(
+        err = c_ac.acLoadImageRGBPackedB(
             self.ac_object,
             ctypes.c_int(rows),
             ctypes.c_int(cols),
@@ -523,10 +618,8 @@ class AC(object):
             raise ACError(err.value)
 
         data = (ctypes.c_ubyte * size)()
-        ptr = ctypes.pointer(data)
-        ptr = ctypes.pointer(ptr)
 
-        err = c_ac.acSaveImageRGBBytes(self.ac_object, ptr)
+        err = c_ac.acSaveImageRGBPackedB(self.ac_object, ctypes.pointer(data))
         if err != AC_OK:
             raise ACError(err)
 
@@ -560,18 +653,10 @@ class AC(object):
         return self.save_image_to_numpy()
 
     @staticmethod
-    def do_benchmark(pID: int, dID: int) -> (float, float):
+    def do_benchmark(processType: ProcessorType, pID: int = 0, dID: int = 0) -> float:
         """
-        Do benchmark and return (cpu_score, gpu_score)
+        Do benchmark and return score
         """
-        c_cpu_score = ctypes.c_double()
-        c_gpu_score = ctypes.c_double()
-
-        flag = c_ac.acBenchmark(
-            ctypes.c_uint(pID),
-            ctypes.c_uint(dID),
-            ctypes.pointer(c_cpu_score),
-            ctypes.pointer(c_gpu_score),
+        return c_ac.acBenchmark2(
+            ctypes.c_int(processType), ctypes.c_uint(pID), ctypes.c_uint(dID)
         )
-
-        return c_cpu_score.value, c_gpu_score.value
