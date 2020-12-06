@@ -25,7 +25,7 @@ os_encoding = locale.getpreferredencoding()
 
 
 class Version(object):
-    pyanime4k = "2.5.0"
+    pyanime4k = "2.5.1"
 
     def __init__(self):
         ac_version = c_ac.acGetVersion()
