@@ -10,9 +10,7 @@ from pyanime4k.wrapper import *
 from pyanime4k.error import ACError
 import numpy as np
 import multiprocessing
-import locale
 
-os_encoding = locale.getpreferredencoding()
 
 (AC_INPUT_BGR, AC_INPUT_RGB, AC_INPUT_YUV444, AC_INPUT_RGB32, AC_INPUT_BGR32) = (
     0,
@@ -331,7 +329,7 @@ class AC(object):
         """
         load an image from disk
         """
-        err = c_ac.acLoadImage(self.ac_object, ctypes.c_char_p(src_path.encode(os_encoding)))
+        err = c_ac.acLoadImage(self.ac_object, ctypes.c_char_p(src_path.encode('utf-8')))
         if err != AC_OK:
             raise ACError(err)
 
@@ -341,7 +339,7 @@ class AC(object):
         """
         if self.parameters.videoMode is False:
             raise ACError(AC_ERROR_VIDEO_MODE_UNINIT)
-        err = c_ac.acLoadVideo(self.ac_object, ctypes.c_char_p(src_path.encode(os_encoding)))
+        err = c_ac.acLoadVideo(self.ac_object, ctypes.c_char_p(src_path.encode('utf-8')))
         if err != AC_OK:
             raise ACError(err)
 
@@ -355,7 +353,7 @@ class AC(object):
         """
         err = c_ac.acSetSaveVideoInfo(
             self.ac_object,
-            ctypes.c_char_p(dst_path.encode(os_encoding)),
+            ctypes.c_char_p(dst_path.encode('utf-8')),
             ctypes.c_int(codec),
             ctypes.c_double(fps),
         )
@@ -459,7 +457,7 @@ class AC(object):
         """
         save image to disk
         """
-        err = c_ac.acSaveImage(self.ac_object, ctypes.c_char_p(dst_path.encode(os_encoding)))
+        err = c_ac.acSaveImage(self.ac_object, ctypes.c_char_p(dst_path.encode('utf-8')))
         if err != AC_OK:
             raise ACError(err)
 
