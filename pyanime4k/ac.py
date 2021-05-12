@@ -22,8 +22,27 @@ import multiprocessing
 (AC_PROCESS_PAUSED, AC_PROCESS_STOP, AC_PROCESS_RUNNING) = (0, 1, 2)
 
 
+def get_c_parameters(parameters):
+    c_struct = ac_parameters()
+    c_struct.passes = ctypes.c_int(parameters.passes)
+    c_struct.pushColorCount = ctypes.c_int(parameters.pushColorCount)
+    c_struct.strengthColor = ctypes.c_double(parameters.strengthColor)
+    c_struct.strengthGradient = ctypes.c_double(parameters.strengthGradient)
+    c_struct.zoomFactor = ctypes.c_double(parameters.zoomFactor)
+    c_struct.fastMode = ctypes.c_int(parameters.fastMode)
+    c_struct.preprocessing = ctypes.c_int(parameters.preprocessing)
+    c_struct.postprocessing = ctypes.c_int(parameters.postprocessing)
+    c_struct.preFilters = ctypes.c_uint8(parameters.preFilters)
+    c_struct.postFilters = ctypes.c_uint8(parameters.postFilters)
+    c_struct.maxThreads = ctypes.c_uint(parameters.maxThreads)
+    c_struct.HDN = ctypes.c_int(parameters.HDN)
+    c_struct.HDNLevel = ctypes.c_int(parameters.HDNLevel)
+    c_struct.alpha = ctypes.c_int(parameters.alpha)
+    return c_struct
+
+
 class Version(object):
-    pyanime4k = "2.5.2"
+    pyanime4k = "2.6.0"
 
     def __init__(self):
         ac_version = c_ac.acGetVersion()
@@ -47,7 +66,6 @@ class Parameters(object):
         self.strengthGradient = 1.0
         self.zoomFactor = 2.0
         self.fastMode = False
-        self.videoMode = False
         self.preprocessing = False
         self.postprocessing = False
         self.preFilters = 4
@@ -64,7 +82,6 @@ class Parameters(object):
         self.strengthGradient = 1.0
         self.zoomFactor = 2.0
         self.fastMode = False
-        self.videoMode = False
         self.preprocessing = False
         self.postprocessing = False
         self.preFilters = 4
@@ -82,7 +99,6 @@ class Parameters(object):
             "strengthGradient:  %.2f\n"
             "zoomFactor:        %.2f\n"
             "fastMode:          %r\n"
-            "videoMode:         %r\n"
             "preprocessing:     %r\n"
             "postprocessing:    %r\n"
             "preFilters:        %d\n"
@@ -98,7 +114,6 @@ class Parameters(object):
                 self.strengthGradient,
                 self.zoomFactor,
                 self.fastMode,
-                self.videoMode,
                 self.preprocessing,
                 self.postprocessing,
                 self.preFilters,
@@ -216,10 +231,10 @@ class CUDAManager(object):
 
 
 class ManagerList(object):
-    def __init__(self, managerList: list):
+    def __init__(self, manager_list: list):
         self._manager_data = ac_managerData()
         self._manager_mask = 0
-        for manager in managerList:
+        for manager in manager_list:
             if isinstance(manager, OpenCLAnime4K09Manager):
                 self._manager_mask |= ac_manager.AC_Manager_OpenCL_Anime4K09
                 self._manager_data.OpenCLAnime4K09Data = ctypes.pointer(
@@ -248,38 +263,21 @@ class AC(object):
     Anime4KCPP core in python
     """
 
-    def __get_c_parameters(self, parameters):
-        c_struct = ac_parameters()
-        c_struct.passes = ctypes.c_int(parameters.passes)
-        c_struct.pushColorCount = ctypes.c_int(parameters.pushColorCount)
-        c_struct.strengthColor = ctypes.c_double(parameters.strengthColor)
-        c_struct.strengthGradient = ctypes.c_double(parameters.strengthGradient)
-        c_struct.zoomFactor = ctypes.c_double(parameters.zoomFactor)
-        c_struct.fastMode = ctypes.c_int(parameters.fastMode)
-        c_struct.videoMode = ctypes.c_int(parameters.videoMode)
-        c_struct.preprocessing = ctypes.c_int(parameters.preprocessing)
-        c_struct.postprocessing = ctypes.c_int(parameters.postprocessing)
-        c_struct.preFilters = ctypes.c_uint8(parameters.preFilters)
-        c_struct.postFilters = ctypes.c_uint8(parameters.postFilters)
-        c_struct.maxThreads = ctypes.c_uint(parameters.maxThreads)
-        c_struct.HDN = ctypes.c_int(parameters.HDN)
-        c_struct.HDNLevel = ctypes.c_int(parameters.HDNLevel)
-        c_struct.alpha = ctypes.c_int(parameters.alpha)
-        return c_struct
-
     def __init__(
         self,
-        managerList: ManagerList = None,
+        manager_list: ManagerList = None,
         parameters: Parameters = Parameters(),
         type: ProcessorType = ProcessorType.CPU_ACNet,
     ):
         err = ctypes.c_int(AC_OK)
         self.ac_object = c_ac.acGetInstance2(
-            ctypes.c_uint(managerList.get_managers() if managerList is not None else 0),
-            ctypes.byref(managerList.get_manager_data())
-            if managerList is not None
+            ctypes.c_uint(
+                manager_list.get_managers() if manager_list is not None else 0
+            ),
+            ctypes.byref(manager_list.get_manager_data())
+            if manager_list is not None
             else None,
-            ctypes.byref(self.__get_c_parameters(parameters)),
+            ctypes.byref(get_c_parameters(parameters)),
             ctypes.c_int(type),
             ctypes.pointer(err),
         )
@@ -292,8 +290,6 @@ class AC(object):
         self.input_type = AC_INPUT_BGR
         self.processor_type = type
 
-        self.process_status = AC_PROCESS_STOP
-
     def __del__(self):
         c_ac.acFreeInstance2(self.ac_object)
 
@@ -304,21 +300,15 @@ class AC(object):
         """
         return Version()
 
-    def get_processor_type(self) -> str:
+    def get_processor_type_string(self) -> str:
         """
         return the processor type string
         """
         return ProcessorType.type_code_str[self.processor_type]
 
-    def set_video_mode(self, flag: bool = True):
-        err = c_ac.acSetVideoMode(self.ac_object, ctypes.c_int(flag))
-        if err != AC_OK:
-            raise ACError(err)
-        self.parameters.videoMode = flag
-
     def set_arguments(self, parameters: Parameters):
         err = c_ac.acSetArguments(
-            self.ac_object, ctypes.byref(self.__get_c_parameters(parameters))
+            self.ac_object, ctypes.byref(get_c_parameters(parameters))
         )
         if err != AC_OK:
             raise ACError(err)
@@ -329,33 +319,8 @@ class AC(object):
         """
         load an image from disk
         """
-        err = c_ac.acLoadImage(self.ac_object, ctypes.c_char_p(src_path.encode('utf-8')))
-        if err != AC_OK:
-            raise ACError(err)
-
-    def load_video(self, src_path: str):
-        """
-        load a video from disk
-        """
-        if self.parameters.videoMode is False:
-            raise ACError(AC_ERROR_VIDEO_MODE_UNINIT)
-        err = c_ac.acLoadVideo(self.ac_object, ctypes.c_char_p(src_path.encode('utf-8')))
-        if err != AC_OK:
-            raise ACError(err)
-
-    def set_save_video_info(
-        self, dst_path: str, codec: Codec = Codec.MP4V, fps: float = 0
-    ):
-        """
-        set output video saving path and codec, should be called before calling process
-
-        set fps to 0 for automatic detection
-        """
-        err = c_ac.acSetSaveVideoInfo(
-            self.ac_object,
-            ctypes.c_char_p(dst_path.encode('utf-8')),
-            ctypes.c_int(codec),
-            ctypes.c_double(fps),
+        err = c_ac.acLoadImage(
+            self.ac_object, ctypes.c_char_p(src_path.encode("utf-8"))
         )
         if err != AC_OK:
             raise ACError(err)
@@ -372,100 +337,13 @@ class AC(object):
 
         self.process_status = AC_PROCESS_STOP
 
-    def process_with_progress(self):
-        """
-        process video with progress displaying
-        """
-        self.process_status = AC_PROCESS_RUNNING
-
-        err = c_ac.acProcessWithPrintProgress(self.ac_object)
-        if err != AC_OK:
-            raise ACError(err)
-
-        self.process_status = AC_PROCESS_STOP
-
-    def process_with_progress_callback(self, func):
-        """
-        process video with callback function:
-
-        func(v :float) -> None
-
-        v: progress value (0 to 1)
-        """
-        self.process_status = AC_PROCESS_RUNNING
-
-        c_callback = ctypes.CFUNCTYPE(None, ctypes.c_double)
-        err = c_ac.acProcessWithProgress(self.ac_object, c_callback(func))
-        if err != AC_OK:
-            raise ACError(err)
-
-        self.process_status = AC_PROCESS_STOP
-
-    def process_with_progress_time_callback(self, func):
-        """
-        process video with callback function:
-
-        func(v :float, t: float) -> None
-
-        v: progress value (0 to 1)
-
-        t: time used
-        """
-        self.process_status = AC_PROCESS_RUNNING
-
-        c_callback = ctypes.CFUNCTYPE(None, ctypes.c_double, ctypes.c_double)
-        err = c_ac.acProcessWithProgressTime(self.ac_object, c_callback(func))
-        if err != AC_OK:
-            raise ACError(err)
-
-        self.process_status = AC_PROCESS_STOP
-
-    def pause_video_process(self):
-        """
-        pause video processing
-        """
-        err = c_ac.acPauseVideoProcess(self.ac_object)
-        if err != AC_OK:
-            raise ACError(err)
-
-        self.process_status = AC_PROCESS_PAUSED
-
-    def continue_video_process(self):
-        """
-        continue video processing
-        """
-        err = c_ac.acContinueVideoProcess(self.ac_object)
-        if err != AC_OK:
-            raise ACError(err)
-
-        self.process_status = AC_PROCESS_RUNNING
-
-    def stop_video_process(self):
-        """
-        stop video processing
-        """
-        err = c_ac.acStopVideoProcess(self.ac_object)
-        if err != AC_OK:
-            raise ACError(err)
-
-        self.process_status = AC_PROCESS_STOP
-
-    def get_process_status(self) -> int:
-        return self.process_status
-
     def save_image(self, dst_path: str):
         """
         save image to disk
         """
-        err = c_ac.acSaveImage(self.ac_object, ctypes.c_char_p(dst_path.encode('utf-8')))
-        if err != AC_OK:
-            raise ACError(err)
-
-    def save_video(self):
-        """
-        compete output video, should be called after calling process
-        """
-        err = c_ac.acSaveVideo(self.ac_object)
+        err = c_ac.acSaveImage(
+            self.ac_object, ctypes.c_char_p(dst_path.encode("utf-8"))
+        )
         if err != AC_OK:
             raise ACError(err)
 
@@ -476,48 +354,6 @@ class AC(object):
         err = c_ac.acShowImage(self.ac_object, ctypes.c_int(self.input_type))
         if err != AC_OK:
             raise ACError(err)
-
-    def init_GPU(self):
-        """
-        initialize GPU for GPU mode
-        """
-        err = c_ac.acInitGPU()
-        if err != AC_OK:
-            raise ACError(err)
-
-    def release_GPU(self):
-        """
-        release GPU for GPU mode
-        """
-        c_ac.acReleaseGPU()
-
-    def is_initialized_GPU(self) -> bool:
-        """
-        check is initialized GPU for GPU mode
-        """
-        flag = c_ac.acIsInitializedGPU()
-        return bool(flag)
-
-    def init_GPUCNN(self):
-        """
-        initialize GPU for GPUCNN mode
-        """
-        err = c_ac.acInitGPUCNN()
-        if err != AC_OK:
-            raise ACError(err)
-
-    def release_GPUCNN(self):
-        """
-        release GPU for GPUCNN mode
-        """
-        c_ac.acReleaseGPUCNN()
-
-    def is_initialized_GPUCNN(self) -> bool:
-        """
-        check is initialized GPU for GPUCNN mode
-        """
-        flag = c_ac.acIsInitializedGPUCNN()
-        return bool(flag)
 
     @staticmethod
     def list_GPUs():
@@ -551,36 +387,15 @@ class AC(object):
         )
         return bool(flag), ctypes.string_at(info).decode()
 
-    @staticmethod
-    def get_GPU_list() -> (str, int, list):
-        """
-        return GPU info string, platforms, and a list of devices of each platform
-        """
-        c_length = ctypes.c_size_t()
-        c_platforms = ctypes.c_size_t()
-        c_ac.acListGPUs(
-            None, ctypes.pointer(c_length), ctypes.pointer(c_platforms), None
-        )
-        length = c_length.value
-        platforms = c_platforms.value
-        info = (ctypes.c_char * length)()
-        devices = (ctypes.c_size_t * length)()
-        c_ac.acListGPUs(info, None, None, devices)
-        return (
-            ctypes.string_at(info).decode(),
-            platforms,
-            [devices[i] for i in range(platforms)],
-        )
-
     def get_processor_info(self) -> str:
         """
         return the current processor infomation
         """
         c_length = ctypes.c_size_t()
-        c_ac.acGetProcessorInfo(self.ac_object ,None, ctypes.pointer(c_length))
+        c_ac.acGetProcessorInfo(self.ac_object, None, ctypes.pointer(c_length))
         length = c_length.value
         info = (ctypes.c_char * length)()
-        c_ac.acGetProcessorInfo(self.ac_object ,info, None)
+        c_ac.acGetProcessorInfo(self.ac_object, info, None)
         return ctypes.string_at(info).decode()
 
     def load_image_from_numpy(self, np_array: np.array, input_type: int = AC_INPUT_RGB):
@@ -601,8 +416,8 @@ class AC(object):
             self.ac_object,
             ctypes.c_int(rows),
             ctypes.c_int(cols),
+            np_array.strides[0],
             data,
-            ctypes.c_int64(0),
             ctypes.c_int(input_as_yuv444),
             ctypes.c_int(input_as_rgb32),
         )
@@ -613,25 +428,34 @@ class AC(object):
         """
         save image to a numpy array and return it
         """
-        err = ctypes.c_int(AC_OK)
-        size = c_ac.acGetResultDataLength(self.ac_object, ctypes.pointer(err))
-        if err.value != AC_OK:
-            raise ACError(err.value)
+        size = ctypes.c_size_t(0)
+        err = c_ac.acSaveImageBufferSize(self.ac_object, ctypes.pointer(size), 0)
+        if err != AC_OK:
+            raise ACError(err)
 
-        data = (ctypes.c_ubyte * size)()
+        data = (ctypes.c_ubyte * size.value)()
 
-        err = c_ac.acSaveImageRGBPackedB(self.ac_object, ctypes.pointer(data))
+        err = c_ac.acSaveImageRGBPacked(self.ac_object, ctypes.pointer(data), 0)
         if err != AC_OK:
             raise ACError(err)
 
         np_array = np.ctypeslib.as_array(data)
 
-        shape = (ctypes.c_int * 3)()
-        err = c_ac.acGetResultShape(self.ac_object, ctypes.pointer(shape))
+        shape_cols = ctypes.c_int(0)
+        shape_rows = ctypes.c_int(0)
+        shape_chan = ctypes.c_int(0)
+        err = c_ac.saveImageShape(
+            self.ac_object,
+            ctypes.pointer(shape_cols),
+            ctypes.pointer(shape_rows),
+            ctypes.pointer(shape_chan),
+        )
         if err != AC_OK:
             raise ACError(err)
 
-        np_array = np_array.reshape((shape[0], shape[1], shape[2]))
+        np_array = np_array.reshape(
+            (shape_cols.value, shape_rows.value, shape_chan.value)
+        )
         return np_array
 
     def proccess_image_with_numpy(
@@ -661,3 +485,151 @@ class AC(object):
         return c_ac.acBenchmark2(
             ctypes.c_int(processType), ctypes.c_uint(pID), ctypes.c_uint(dID)
         )
+
+
+class VideoProcessor(object):
+    """
+    Anime4KCPP VideoProcessor in python
+    """
+
+    def __init__(self, ac_object: AC = AC()):
+        self.video_processor_object = c_ac.acGetVideoProcessorFromInstance(
+            ac_object.ac_object
+        )
+
+        self.video_processor_object = ctypes.c_void_p(self.video_processor_object)
+
+        self.process_status = AC_PROCESS_STOP
+
+    def __del__(self):
+        c_ac.acFreeVideoProcessor(self.video_processor_object)
+
+    def load_video(self, src_path: str):
+        """
+        load a video from disk
+        """
+        err = c_ac.acLoadVideo(
+            self.video_processor_object, ctypes.c_char_p(src_path.encode("utf-8"))
+        )
+        if err != AC_OK:
+            raise ACError(err)
+
+    def save_video(self):
+        """
+        compete output video, should be called after calling process
+        """
+        err = c_ac.acSaveVideo(self.video_processor_object)
+        if err != AC_OK:
+            raise ACError(err)
+
+    def set_save_video_info(
+        self, dst_path: str, codec: Codec = Codec.MP4V, fps: float = 0
+    ):
+        """
+        set output video saving path and codec, should be called before calling process
+
+        set fps to 0 for automatic detection
+        """
+        err = c_ac.acSetSaveVideoInfo(
+            self.video_processor_object,
+            ctypes.c_char_p(dst_path.encode("utf-8")),
+            ctypes.c_int(codec),
+            ctypes.c_double(fps),
+        )
+        if err != AC_OK:
+            raise ACError(err)
+
+    def process(self):
+        """
+        process image or video
+        """
+        self.process_status = AC_PROCESS_RUNNING
+
+        err = c_ac.acProcess(self.video_processor_object)
+        if err != AC_OK:
+            raise ACError(err)
+
+        self.process_status = AC_PROCESS_STOP
+
+    def process_with_progress(self):
+        """
+        process video with progress displaying
+        """
+        self.process_status = AC_PROCESS_RUNNING
+
+        err = c_ac.acProcessWithPrintProgress(self.video_processor_object)
+        if err != AC_OK:
+            raise ACError(err)
+
+        self.process_status = AC_PROCESS_STOP
+
+    def process_with_progress_callback(self, func):
+        """
+        process video with callback function:
+
+        func(v :float) -> None
+
+        v: progress value (0 to 1)
+        """
+        self.process_status = AC_PROCESS_RUNNING
+
+        c_callback = ctypes.CFUNCTYPE(None, ctypes.c_double)
+        err = c_ac.acProcessWithProgress(self.video_processor_object, c_callback(func))
+        if err != AC_OK:
+            raise ACError(err)
+
+        self.process_status = AC_PROCESS_STOP
+
+    def process_with_progress_time_callback(self, func):
+        """
+        process video with callback function:
+
+        func(v :float, t: float) -> None
+
+        v: progress value (0 to 1)
+
+        t: time used
+        """
+        self.process_status = AC_PROCESS_RUNNING
+
+        c_callback = ctypes.CFUNCTYPE(None, ctypes.c_double, ctypes.c_double)
+        err = c_ac.acProcessWithProgressTime(
+            self.video_processor_object, c_callback(func)
+        )
+        if err != AC_OK:
+            raise ACError(err)
+
+        self.process_status = AC_PROCESS_STOP
+
+    def pause_video_process(self):
+        """
+        pause video processing
+        """
+        err = c_ac.acPauseVideoProcess(self.video_processor_object)
+        if err != AC_OK:
+            raise ACError(err)
+
+        self.process_status = AC_PROCESS_PAUSED
+
+    def continue_video_process(self):
+        """
+        continue video processing
+        """
+        err = c_ac.acContinueVideoProcess(self.video_processor_object)
+        if err != AC_OK:
+            raise ACError(err)
+
+        self.process_status = AC_PROCESS_RUNNING
+
+    def stop_video_process(self):
+        """
+        stop video processing
+        """
+        err = c_ac.acStopVideoProcess(self.video_processor_object)
+        if err != AC_OK:
+            raise ACError(err)
+
+        self.process_status = AC_PROCESS_STOP
+
+    def get_process_status(self) -> int:
+        return self.process_status

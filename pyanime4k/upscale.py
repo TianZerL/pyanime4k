@@ -9,6 +9,7 @@ Editor: K4YT3X
 # local imports
 from pyanime4k import ffmpeg_handler
 from pyanime4k.ac import AC
+from pyanime4k.ac import VideoProcessor
 from pyanime4k.ac import Parameters
 from pyanime4k.ac import Codec
 from pyanime4k import ac
@@ -75,26 +76,26 @@ def show_upscaled_image(
     if GPU_mode:
         if ACNet:
             ac_object = AC(
-                managerList=ac.ManagerList([ac.OpenCLACNetManager(pID=0, dID=0)]),
+                manager_list=ac.ManagerList([ac.OpenCLACNetManager(pID=0, dID=0)]),
                 parameters=parameters,
                 type=ac.ProcessorType.OpenCL_ACNet,
             )
         else:
             ac_object = AC(
-                managerList=ac.ManagerList([ac.OpenCLACNetManager(pID=0, dID=0)]),
+                manager_list=ac.ManagerList([ac.OpenCLACNetManager(pID=0, dID=0)]),
                 parameters=parameters,
                 type=ac.ProcessorType.OpenCL_Anime4K09,
             )
     else:
         if ACNet:
             ac_object = AC(
-                managerList=None,
+                manager_list=None,
                 parameters=parameters,
                 type=ac.ProcessorType.CPU_ACNet,
             )
         else:
             ac_object = AC(
-                managerList=None,
+                manager_list=None,
                 parameters=parameters,
                 type=ac.ProcessorType.CPU_Anime4K09,
             )
@@ -148,26 +149,26 @@ def upscale_images(
     if GPU_mode:
         if ACNet:
             ac_object = AC(
-                managerList=ac.ManagerList([ac.OpenCLACNetManager(pID=0, dID=0)]),
+                manager_list=ac.ManagerList([ac.OpenCLACNetManager(pID=0, dID=0)]),
                 parameters=parameters,
                 type=ac.ProcessorType.OpenCL_ACNet,
             )
         else:
             ac_object = AC(
-                managerList=ac.ManagerList([ac.OpenCLACNetManager(pID=0, dID=0)]),
+                manager_list=ac.ManagerList([ac.OpenCLACNetManager(pID=0, dID=0)]),
                 parameters=parameters,
                 type=ac.ProcessorType.OpenCL_Anime4K09,
             )
     else:
         if ACNet:
             ac_object = AC(
-                managerList=None,
+                manager_list=None,
                 parameters=parameters,
                 type=ac.ProcessorType.CPU_ACNet,
             )
         else:
             ac_object = AC(
-                managerList=None,
+                manager_list=None,
                 parameters=parameters,
                 type=ac.ProcessorType.CPU_Anime4K09,
             )
@@ -231,36 +232,35 @@ def upscale_videos(
     elif not output_path.is_dir():
         raise FileExistsError("destination path already exists and isn't a directory")
 
-    # set parameters to video mode
-    parameters.videoMode = True
-
     # create anime4k object
     if GPU_mode:
         if ACNet:
             ac_object = AC(
-                managerList=ac.ManagerList([ac.OpenCLACNetManager(pID=0, dID=0)]),
+                manager_list=ac.ManagerList([ac.OpenCLACNetManager(pID=0, dID=0)]),
                 parameters=parameters,
                 type=ac.ProcessorType.OpenCL_ACNet,
             )
         else:
             ac_object = AC(
-                managerList=ac.ManagerList([ac.OpenCLACNetManager(pID=0, dID=0)]),
+                manager_list=ac.ManagerList([ac.OpenCLACNetManager(pID=0, dID=0)]),
                 parameters=parameters,
                 type=ac.ProcessorType.OpenCL_Anime4K09,
             )
     else:
         if ACNet:
             ac_object = AC(
-                managerList=None,
+                manager_list=None,
                 parameters=parameters,
                 type=ac.ProcessorType.CPU_ACNet,
             )
         else:
             ac_object = AC(
-                managerList=None,
+                manager_list=None,
                 parameters=parameters,
                 type=ac.ProcessorType.CPU_Anime4K09,
             )
+
+    video_processor = VideoProcessor(ac_object)
 
     # process each of the files in the list
     for path in input_paths:
@@ -270,10 +270,10 @@ def upscale_videos(
         temporary_video_file_path = temporary_directory.joinpath("temp.mp4")
 
         # process and save video file to temp/temp.mp4
-        ac_object.load_video(str(path))
-        ac_object.set_save_video_info(str(temporary_video_file_path), codec)
-        ac_object.process_with_progress()
-        ac_object.save_video()
+        video_processor.load_video(str(path))
+        video_processor.set_save_video_info(str(temporary_video_file_path), codec)
+        video_processor.process_with_progress()
+        video_processor.save_video()
 
         ffmpeg_handler.migrate_audio_streams(
             upscaled_video=temporary_video_file_path,

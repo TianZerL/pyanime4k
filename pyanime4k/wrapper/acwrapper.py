@@ -35,7 +35,6 @@ class ac_parameters(ctypes.Structure):
         double strengthGradient;
         double zoomFactor;
         ac_bool fastMode;
-        ac_bool videoMode;
         ac_bool preprocessing;
         ac_bool postprocessing;
         unsigned char preFilters;
@@ -54,7 +53,6 @@ class ac_parameters(ctypes.Structure):
         ("strengthGradient", ctypes.c_double),
         ("zoomFactor", ctypes.c_double),
         ("fastMode", ctypes.c_int),
-        ("videoMode", ctypes.c_int),
         ("preprocessing", ctypes.c_int),
         ("postprocessing", ctypes.c_int),
         ("preFilters", ctypes.c_uint8),
@@ -203,10 +201,12 @@ class ac_manager(object):
 
 ac_instance = ctypes.c_void_p
 
+ac_videoProcessor = ctypes.c_void_p
+
 c_ac.acGetVersion.restype = ac_version
 
 c_ac.acGetInstance2.restype = ac_instance
 
-c_ac.acGetResultDataLength.restype = ctypes.c_size_t
+c_ac.acGetVideoProcessorFromInstance.restype = ac_videoProcessor
 
 c_ac.acBenchmark2.restype = ctypes.c_double

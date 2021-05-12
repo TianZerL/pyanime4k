@@ -92,7 +92,7 @@ import cv2
 
 video = cv2.VideoCapture(r"F:\Temp\Anime4K\P1-1.m4v")
 a = ac.AC(
-    managerList=ac.ManagerList([ac.OpenCLACNetManager(pID=0, dID=0)]),
+    manager_list=ac.ManagerList([ac.OpenCLACNetManager(pID=0, dID=0)]),
     type=ac.ProcessorType.OpenCL_ACNet
 )
 while True:
@@ -122,7 +122,7 @@ flag, info = ac.AC.check_GPU_support(GPGPU=ac.GPGPUModel.AC_OpenCL, pID=1, dID=0
 # init AC core with pID and dID
 if flag:
     a = ac.AC(
-        managerList=ac.ManagerList([ac.OpenCLACNetManager(pID=0, dID=0)]),
+        manager_list=ac.ManagerList([ac.OpenCLACNetManager(pID=0, dID=0)]),
         type=ac.ProcessorType.OpenCL_ACNet
     )
 
@@ -147,7 +147,7 @@ parameters = ac.Parameters()
 parameters.HDN = True
 
 a = ac.AC(
-    managerList=ac.ManagerList([ac.OpenCLACNetManager(pID=0, dID=0)]),
+    manager_list=ac.ManagerList([ac.OpenCLACNetManager(pID=0, dID=0)]),
     type=ac.ProcessorType.OpenCL_ACNet
 )
 
@@ -266,7 +266,7 @@ videoWriter = cv2.VideoWriter(
 
 # init Anime4KCPP
 a = ac.AC(
-    managerList=ac.ManagerList([ac.OpenCLACNetManager(pID=0, dID=0)]),
+    manager_list=ac.ManagerList([ac.OpenCLACNetManager(pID=0, dID=0)]),
     type=ac.ProcessorType.OpenCL_ACNet
 )
 
