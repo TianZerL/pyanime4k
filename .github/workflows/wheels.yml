@@ -4,6 +4,8 @@ on:
     branches: [master]
   pull_request:
     branches: [master]
+  release:
+    types: [published]
 permissions:
   contents: read
 
@@ -44,5 +46,35 @@ jobs:
       - name: Upload artifacts
         uses: actions/upload-artifact@v4
         with:
-          name: wheels-${{ matrix.os }}
-          path: ./wheelhouse/*.whl
+          name: pyanime4k-wheels-${{ matrix.os }}
+          path: wheelhouse/*.whl
+
+  build_sdist:
+    name: Build source distribution
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Build sdist
+        run: pipx run build --sdist
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: pyanime4k-sdist
+          path: dist/*.tar.gz
+
+    upload_all:
+      needs: [build_wheels, make_sdist]
+      environment: pypi
+      permissions:
+        id-token: write
+      runs-on: ubuntu-latest
+      if: github.event_name == 'release' && github.event.action == 'published'
+      steps:
+      - uses: actions/download-artifact@v4
+        with:
+          pattern: pyanime4k-*
+          path: dist
+          merge-multiple: true
+
+      - uses: pypa/gh-action-pypi-publish@release/v1
