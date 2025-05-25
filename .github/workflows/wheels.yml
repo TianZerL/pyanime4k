@@ -38,7 +38,7 @@ jobs:
           MACOSX_DEPLOYMENT_TARGET: '10.12'
           CIBW_PROJECT_REQUIRES_PYTHON: '>=3.8'
           CIBW_SKIP: pp*
-          CIBW_BEFORE_ALL_LINUX: 'mkdir -p /project/src/Anime4KCPP'
+          CIBW_BEFORE_ALL_LINUX: 'mkdir -p /project/src/Anime4KCPP && git clone https://github.com/TianZerL/Anime4KCPP.git /project/src/Anime4KCPP'
           CIBW_BUILD_VERBOSITY: '1'
         with:
           output-dir: wheelhouse
