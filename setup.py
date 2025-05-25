@@ -2,6 +2,13 @@ import os
 from pathlib import Path
 from skbuild import setup
 
+def is_python_extension(file_path):
+    exts = [".dll", ".pyd", ".dylib", ".so"]
+    for ext in exts:
+        if ext in file_path:
+            return True
+    return False
+
 def check_cuda():
     cuda_path = os.environ.get("CUDA_HOME") or os.environ.get("CUDA_PATH")
     if cuda_path:
@@ -38,7 +45,7 @@ def main():
         cmake_args=pyac_cmake_args,
         cmake_source_dir=os.path.abspath("src/Anime4KCPP"),
         cmake_install_dir="src/pyanime4k",
-        cmake_process_manifest_hook = lambda manifest : list(filter(lambda name: "pyac" in name, manifest))
+        cmake_process_manifest_hook = lambda manifest : list(filter(lambda name: is_python_extension(name), manifest))
     )
 
 if __name__ == "__main__":
