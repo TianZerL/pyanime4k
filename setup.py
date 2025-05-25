@@ -29,7 +29,7 @@ def main():
 
     setup(
         name="pyanime4k",
-        version="3.0",
+        version="3.0.0",
         packages=["pyanime4k", "pyanime4k.pyac"],
         package_dir={"pyanime4k": "src/pyanime4k", "pyanime4k.pyac": "src/pyanime4k/pyac"},
         license="MIT",
