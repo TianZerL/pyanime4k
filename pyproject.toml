@@ -11,4 +11,4 @@ select = "*-musllinux*"
 before-all = "apk add opencl-dev && mkdir -p /project/src/Anime4KCPP && git clone https://github.com/TianZerL/Anime4KCPP.git /project/src/Anime4KCP"
 
 [tool.cibuildwheel]
-build = ["pp*", "*win32", "*i686"]
+skip = ["pp*", "*win32", "*i686"]
