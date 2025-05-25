@@ -2,9 +2,13 @@
 requires = ["setuptools>=42", "scikit-build>=0.13", "cmake>=3.19", "numpy"]
 build-backend = "setuptools.build_meta"
 
+[project]
+license = "MIT"
+requires-python = ">=3.8"
+
 [tool.cibuildwheel]
 skip = ["pp*", "*win32", "*i686", "*musllinux*"]
 
 [tool.cibuildwheel.linux]
-before-all = "yum install -y ocl-icd ocl-icd-devel && mkdir -p /project/src/Anime4KCPP && git clone https://github.com/TianZerL/Anime4KCPP.git /project/src/Anime4KCPP"
+before-all = "yum install -y ocl-icd ocl-icd-devel && mkdir -p src/Anime4KCPP && git clone https://github.com/TianZerL/Anime4KCPP.git src/Anime4KCPP"
 test-command = "echo 'installed'"
