@@ -24,8 +24,8 @@ jobs:
         with:
           python-version: '3.x'
 
-      - name: Install CUDA (Linux/Windows)
-        if: matrix.os == 'ubuntu-latest' || matrix.os == 'windows-latest'
+      - name: Install CUDA
+        if: matrix.os == 'windows-latest'
         uses: Jimver/cuda-toolkit@v0.2.23
         id: cuda-toolkit
         with:
@@ -35,9 +35,10 @@ jobs:
       - name: Build wheels
         uses: pypa/cibuildwheel@v2.23.3
         env:
-          CIBW_PROJECT_REQUIRES_PYTHON: '>=3.8'
           MACOSX_DEPLOYMENT_TARGET: '10.12'
+          CIBW_PROJECT_REQUIRES_PYTHON: '>=3.8'
           CIBW_SKIP: pp*
+          CIBW_BEFORE_ALL_LINUX: 'mkdir -p /project/src/Anime4KCPP'
         with:
           output-dir: wheelhouse
 
