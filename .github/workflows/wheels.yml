@@ -43,7 +43,6 @@ jobs:
         env:
           MACOSX_DEPLOYMENT_TARGET: '10.12'
           CIBW_PROJECT_REQUIRES_PYTHON: '>=3.8'
-          CIBW_BUILD_VERBOSITY: '1'
         with:
           output-dir: wheelhouse
 
@@ -62,7 +61,7 @@ jobs:
           submodules: true
 
       - name: Build sdist
-        run: pipx run build --sdist
+        run: python setup.py sdist
 
       - uses: actions/upload-artifact@v4
         with:
