@@ -68,7 +68,7 @@ jobs:
           path: dist/*.tar.gz
 
   upload_all:
-    needs: [build_wheels, make_sdist]
+    needs: [build_wheels, build_sdist]
     environment: pypi
     permissions:
       id-token: write
