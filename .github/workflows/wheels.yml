@@ -39,6 +39,7 @@ jobs:
           CIBW_PROJECT_REQUIRES_PYTHON: '>=3.8'
           CIBW_SKIP: pp*
           CIBW_BEFORE_ALL_LINUX: 'mkdir -p /project/src/Anime4KCPP'
+          CIBW_BUILD_VERBOSITY: '1'
         with:
           output-dir: wheelhouse
 
