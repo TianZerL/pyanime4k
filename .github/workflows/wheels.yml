@@ -1,0 +1,47 @@
+name: Build wheels
+on:
+  push:
+    branches: [master]
+    paths:
+    - 'src/*'
+  pull_request:
+    branches: [master]
+    paths:
+    - 'src/*'
+permissions:
+  contents: read
+
+jobs:
+  build_wheels:
+    name: Build wheels on ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-13, macos-latest]
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+        submodules: true
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+
+      - name: Install cibuildwheel
+        run: pip install cibuildwheel
+
+      - name: Install CUDA (Linux/Windows)
+        if: matrix.os == 'ubuntu-latest' || matrix.os == 'windows-latest'
+        uses: Jimver/cuda-toolkit@master
+        id: cuda-toolkit
+        with:
+          log-file-suffix: '${{matrix.os}}.txt'
+
+      - name: Build wheels
+        run: python -m cibuildwheel --output-dir wheelhouse
+
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: wheels-${{ matrix.os }}
+          path: ./wheelhouse/*.whl
