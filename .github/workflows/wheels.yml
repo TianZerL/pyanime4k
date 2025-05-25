@@ -30,7 +30,7 @@ jobs:
         id: cuda-toolkit
         with:
           method: 'network'
-          sub-packages: '["nvcc"]'
+          sub-packages: '["nvcc", "cudart", "opencl"]'
 
       - name: Build wheels
         uses: pypa/cibuildwheel@v2.23.3
