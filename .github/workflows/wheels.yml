@@ -60,8 +60,11 @@ jobs:
         with:
           submodules: true
 
+      - name: clone Anime4KCPP
+        run: mkdir -p src/Anime4KCPP && git clone https://github.com/TianZerL/Anime4KCPP.git src/Anime4KCPP
+
       - name: Build sdist
-        run: pip install build && python -m build --sdist
+        run: pipx run build --sdist
 
       - uses: actions/upload-artifact@v4
         with:
