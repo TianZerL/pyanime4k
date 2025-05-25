@@ -5,7 +5,7 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "pyanime4k"
 version = "3.0.0"
-license = license = {text = "MIT", file = "LICENSE"}
+license = {text = "MIT", file = "LICENSE"}
 requires-python = ">=3.8"
 readme = "README.md"
 
