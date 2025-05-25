@@ -67,18 +67,18 @@ jobs:
           name: pyanime4k-sdist
           path: dist/*.tar.gz
 
-    upload_all:
-      needs: [build_wheels, make_sdist]
-      environment: pypi
-      permissions:
-        id-token: write
-      runs-on: ubuntu-latest
-      if: github.event_name == 'release' && github.event.action == 'published'
-      steps:
-      - uses: actions/download-artifact@v4
-        with:
-          pattern: pyanime4k-*
-          path: dist
-          merge-multiple: true
+  upload_all:
+    needs: [build_wheels, make_sdist]
+    environment: pypi
+    permissions:
+      id-token: write
+    runs-on: ubuntu-latest
+    if: github.event_name == 'release' && github.event.action == 'published'
+    steps:
+    - uses: actions/download-artifact@v4
+      with:
+        pattern: pyanime4k-*
+        path: dist
+        merge-multiple: true
 
-      - uses: pypa/gh-action-pypi-publish@release/v1
+    - uses: pypa/gh-action-pypi-publish@release/v1
