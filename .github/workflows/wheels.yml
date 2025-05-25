@@ -20,11 +20,9 @@ jobs:
         with:
           submodules: true
 
-      - name: Set up Python
-        uses: actions/setup-python@v5
-
-      - name: Install cibuildwheel
-        run: pip install cibuildwheel
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.x'
 
       - name: Install CUDA (Linux/Windows)
         if: matrix.os == 'ubuntu-latest' || matrix.os == 'windows-latest'
@@ -35,11 +33,13 @@ jobs:
           sub-packages: '["nvcc"]'
 
       - name: Build wheels
-        run: python -m cibuildwheel --output-dir wheelhouse
+        uses: pypa/cibuildwheel@v2.23.3
         env:
           CIBW_PROJECT_REQUIRES_PYTHON: '>=3.8'
           MACOSX_DEPLOYMENT_TARGET: '10.12'
           CIBW_SKIP: pp*
+        with:
+          output-dir: wheelhouse
 
       - name: Upload artifacts
         uses: actions/upload-artifact@v4
