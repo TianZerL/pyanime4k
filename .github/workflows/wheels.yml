@@ -37,7 +37,7 @@ jobs:
         env:
           MACOSX_DEPLOYMENT_TARGET: '10.12'
           CIBW_PROJECT_REQUIRES_PYTHON: '>=3.8'
-          CIBW_SKIP: pp*
+          CIBW_SKIP: 'pp* *-win32 *-manylinux_i686'
           CIBW_BEFORE_ALL_LINUX: 'mkdir -p /project/src/Anime4KCPP && yum install -y ocl-icd ocl-icd-devel && git clone https://github.com/TianZerL/Anime4KCPP.git /project/src/Anime4KCPP'
           CIBW_BUILD_VERBOSITY: '1'
         with:
