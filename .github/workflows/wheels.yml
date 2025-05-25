@@ -4,8 +4,6 @@ on:
     branches: [master]
   pull_request:
     branches: [master]
-permissions:
-  contents: read
 
 jobs:
   build_wheels:
@@ -36,6 +34,7 @@ jobs:
         env:
           CIBW_PROJECT_REQUIRES_PYTHON: '>=3.8'
           MACOSX_DEPLOYMENT_TARGET: '10.12'
+          CIBW_SKIP: pp*
 
       - name: Upload artifacts
         uses: actions/upload-artifact@v4
