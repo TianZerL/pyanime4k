@@ -30,8 +30,6 @@ jobs:
         if: matrix.os == 'ubuntu-latest' || matrix.os == 'windows-latest'
         uses: Jimver/cuda-toolkit@master
         id: cuda-toolkit
-        with:
-          log-file-suffix: '${{matrix.os}}.txt'
 
       - name: Build wheels
         run: python -m cibuildwheel --output-dir wheelhouse
