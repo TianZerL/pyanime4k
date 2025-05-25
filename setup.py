@@ -24,7 +24,7 @@ def main():
         name="pyanime4k",
         version="3.0",
         packages=["pyanime4k", "pyanime4k.pyac"],
-        package_dir={"pyanime4k": os.path.abspath("src/pyanime4k"), "pyanime4k.pyac": os.path.abspath("src/pyanime4k/pyac")},
+        package_dir={"pyanime4k": "src/pyanime4k", "pyanime4k.pyac": "src/pyanime4k/pyac"},
         license="MIT",
         python_requires=">=3.8",
         classifiers=[
