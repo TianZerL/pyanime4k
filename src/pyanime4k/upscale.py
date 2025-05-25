@@ -1,7 +1,7 @@
 from itertools import zip_longest, islice
 from pathlib import Path
 
-from .image_io import *
+from .image_io import imread, imwrite
 from .processor import Processor
 
 def upscale_images(
