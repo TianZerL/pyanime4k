@@ -5,8 +5,9 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "pyanime4k"
 version = "3.0.0"
-license = "MIT"
+license = license = {text = "MIT", file = "LICENSE"}
 requires-python = ">=3.8"
+readme = "README.md"
 
 [tool.cibuildwheel]
 skip = ["pp*", "*win32", "*i686", "*musllinux*"]
