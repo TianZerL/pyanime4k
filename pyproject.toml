@@ -1,3 +1,14 @@
 [build-system]
 requires = ["setuptools>=42", "scikit-build>=0.13", "cmake>=3.1", "numpy"]
 build-backend = "setuptools.build_meta"
+
+[tool.cibuildwheel.linux]
+before-all = "yum install -y ocl-icd ocl-icd-devel && mkdir -p /project/src/Anime4KCPP && git clone https://github.com/TianZerL/Anime4KCPP.git /project/src/Anime4KCPP"
+test-command = "echo 'installed'"
+
+[[tool.cibuildwheel.overrides]]
+select = "*-musllinux*"
+before-all = "apk add opencl-dev && mkdir -p /project/src/Anime4KCPP && git clone https://github.com/TianZerL/Anime4KCPP.git /project/src/Anime4KCP"
+
+[tool.cibuildwheel]
+build = ["pp*", "*win32", "*i686"]
