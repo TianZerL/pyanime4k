@@ -21,7 +21,7 @@ def main():
         name="pyanime4k",
         version="3.0",
         packages=["pyanime4k", "pyanime4k.pyac"],
-        package_dir={"pyanime4k": "src/pyanime4k", "pyanime4k.pyac": "src/pyanime4k/pyac"},
+        package_dir={"pyanime4k": os.path.abspath("src/pyanime4k"), "pyanime4k.pyac": os.path.abspath("src/pyanime4k/pyac")},
         license="MIT",
         python_requires=">=3.8",
         classifiers=[
@@ -33,7 +33,7 @@ def main():
             "Operating System :: Unix",
         ],
         cmake_args=pyac_cmake_args,
-        cmake_source_dir="src/Anime4KCPP",
+        cmake_source_dir=os.path.abspath("src/Anime4KCPP"),
         cmake_install_dir="src/pyanime4k",
         cmake_process_manifest_hook = lambda manifest : list(filter(lambda name: "pyac" in name, manifest))
     )
