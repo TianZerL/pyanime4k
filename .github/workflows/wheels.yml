@@ -30,9 +30,6 @@ jobs:
           method: 'network'
           sub-packages: '["nvcc", "cudart", "opencl"]'
 
-      - name: Update setuptools
-        run: python -m pip install --upgrade setuptools
-
       - name: Build wheels
         uses: pypa/cibuildwheel@v2.23.3
         env:
