@@ -30,13 +30,6 @@ def main():
     setup(
         packages=["pyanime4k", "pyanime4k.pyac"],
         package_dir={"pyanime4k": "src/pyanime4k", "pyanime4k.pyac": "src/pyanime4k/pyac"},
-        classifiers=[
-            "Programming Language :: Python :: 3",
-            "Operating System :: Microsoft :: Windows",
-            "Operating System :: MacOS",
-            "Operating System :: POSIX",
-            "Operating System :: Unix",
-        ],
         cmake_args=pyac_cmake_args,
         cmake_source_dir="src/Anime4KCPP",
         cmake_install_dir="src/pyanime4k",
