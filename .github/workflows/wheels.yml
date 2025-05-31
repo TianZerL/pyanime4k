@@ -1,13 +1,5 @@
 name: Build wheels
 on:
-  push:
-    branches: [master]
-    paths:
-    - 'src/**'
-  pull_request:
-    branches: [master]
-    paths:
-    - 'src/**'
   release:
     types: [published]
 permissions:
