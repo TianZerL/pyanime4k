@@ -11,9 +11,10 @@ pip install pyanime4k
 You can also build the wheel by yourself.
 ```shell
 # sudo apt install ocl-icd-opencl-dev cmake build-essential
-get clone https://github.com/TianZerL/pyanime4k.git
+get clone --recurse-submodules https://github.com/TianZerL/pyanime4k.git
 cd pyanime4k
-python setup.py bdist_wheel  
+pip install scikit-build
+python setup.py bdist_wheel
 ```
 
 # Usages
