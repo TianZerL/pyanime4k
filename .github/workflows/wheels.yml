@@ -61,9 +61,6 @@ jobs:
         with:
           submodules: true
 
-      - name: clone Anime4KCPP
-        run: mkdir -p src/Anime4KCPP && git clone https://github.com/TianZerL/Anime4KCPP.git src/Anime4KCPP
-
       - name: Build sdist
         run: pipx run build --sdist
 

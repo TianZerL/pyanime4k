@@ -1,17 +1,18 @@
 [build-system]
-requires = ["setuptools>=42", "scikit-build>=0.13", "cmake>=3.19", "numpy"]
+requires = ["setuptools>=42", "scikit-build>=0.13", "cmake>=3.19"]
 build-backend = "setuptools.build_meta"
 
 [project]
 name = "pyanime4k"
-version = "3.0.0"
+version = "3.0.1"
 license = {text = "MIT"}
 requires-python = ">=3.8"
 readme = "README.md"
+dependencies = ["numpy"]
 
 [tool.cibuildwheel]
 skip = ["pp*", "*win32", "*i686", "*musllinux*"]
 
 [tool.cibuildwheel.linux]
-before-all = "yum install -y ocl-icd ocl-icd-devel && mkdir -p src/Anime4KCPP && git clone https://github.com/TianZerL/Anime4KCPP.git src/Anime4KCPP"
+before-all = "yum install -y ocl-icd ocl-icd-devel"
 test-command = "echo 'installed'"
