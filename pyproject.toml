@@ -19,6 +19,7 @@ classifiers = [
 
 [tool.cibuildwheel]
 skip = ["pp*", "*win32", "*i686", "*musllinux*"]
+build-verbosity = 2
 
 [tool.cibuildwheel.linux]
 before-all = "yum install -y ocl-icd ocl-icd-devel"
