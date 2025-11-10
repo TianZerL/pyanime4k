@@ -1,4 +1,4 @@
-import os
+import platform, os
 from pathlib import Path
 from setuptools import find_namespace_packages
 from skbuild import setup
@@ -20,9 +20,12 @@ def check_cuda():
     return False
 
 def main():
-    pyac_cmake_args = ["-DAC_CORE_WITH_OPENCL=ON", "-DAC_CORE_WITH_EIGEN3=ON", "-DAC_BUILD_BINDING_PYTHON=ON", "-DAC_BUILD_CLI=OFF"]
+    pyac_cmake_args = ["-DAC_CORE_WITH_EIGEN3=ON", "-DAC_BUILD_BINDING_PYTHON=ON", "-DAC_BUILD_CLI=OFF"]
 
-    if os.name == 'nt':
+    if platform.system() != 'Darwin':
+        pyac_cmake_args.append("-DAC_CORE_WITH_OPENCL=ON"), 
+
+    if platform.system() == 'Windows':
         pyac_cmake_args.append("-DAC_ENABLE_STATIC_CRT=ON")
 
     if check_cuda():
