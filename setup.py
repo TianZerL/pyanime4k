@@ -20,7 +20,7 @@ def check_cuda():
     return False
 
 def main():
-    pyac_cmake_args = ["-DAC_CORE_WITH_OPENCL=ON", "-DAC_CORE_WITH_EIGEN3=ON", "-DAC_BUILD_BINDING_PYTHON=ON", "-DAC_BUILD_CLI=OFF"]
+    pyac_cmake_args = ["-DAC_CORE_WITH_OPENCL=ON", "-DAC_CORE_WITH_EIGEN3=ON", "-DAC_BUILD_BINDING_PYTHON=ON", "-DAC_BUILD_CLI=OFF", "-DCMAKE_INSTALL_LIBDIR=src/pyanime4k/pyac"]
 
     if os.name == 'nt':
         pyac_cmake_args.append("-DAC_ENABLE_STATIC_CRT=ON")
@@ -33,6 +33,7 @@ def main():
         package_dir={'': 'src'},
         cmake_args=pyac_cmake_args,
         cmake_source_dir="src/Anime4KCPP",
+        cmake_install_dir="src/pyanime4k",
         cmake_process_manifest_hook = lambda manifest : list(filter(lambda name: is_python_extension(name), manifest))
     )
 
