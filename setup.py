@@ -30,10 +30,10 @@ def main():
 
     setup(
         packages=find_packages(where='src'),
-        package_dir={"pyanime4k": "src/pyanime4k", "pyanime4k.pyac": "src/pyanime4k/pyac", "pyanime4k.pyac.pyac": "src/pyanime4k/pyac/pyac"},
+        package_dir={'': 'src'},
+        package_data={'pyanime4k.pyac': ['**/*.pyi']},
         cmake_args=pyac_cmake_args,
         cmake_source_dir="src/Anime4KCPP",
-        cmake_install_dir="src/pyanime4k",
         cmake_process_manifest_hook = lambda manifest : list(filter(lambda name: is_python_extension(name), manifest))
     )
 
