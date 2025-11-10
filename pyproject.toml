@@ -23,7 +23,10 @@ build-verbosity = 1
 
 [tool.cibuildwheel.macos]
 environment = "MACOSX_DEPLOYMENT_TARGET=10.15"
-before-all = "curl -o /Library/Developer/CommandLineTools/SDKs/MacOSX10.15.sdk/System/Library/Frameworks/OpenCL.framework/Headers/opencl.hpp https://github.com/KhronosGroup/OpenCL-CLHPP/raw/refs/heads/main/include/CL/opencl.hpp"
+before-all = [
+    "mkdir -p ~/local/include/CL",
+    "curl -o ~/local/include/CL/opencl.hpp https://github.com/KhronosGroup/OpenCL-CLHPP/raw/refs/heads/main/include/CL/opencl.hpp",
+]
 
 [tool.cibuildwheel.linux]
 before-all = "yum install -y ocl-icd ocl-icd-devel"
