@@ -30,12 +30,19 @@ jobs:
           method: 'network'
           sub-packages: '["nvcc", "cudart", "opencl"]'
 
+      - name: Install PoCL
+        if: matrix.os == 'macos-15-intel'
+        run: |
+          brew install pocl
+          POCL_INSTALL_PATH=$(brew --prefix pocl)
+          echo "OCL_ICD_VENDORS=$POCL_INSTALL_PATH/etc/OpenCL/vendors" >> $GITHUB_ENV
+          SDKROOT=$(xcrun --show-sdk-path)
+          echo "SDKROOT=$SDKROOT" >> $GITHUB_ENV
+
       - name: Build wheels
         uses: pypa/cibuildwheel@v2.23.3
         env:
           CIBW_PROJECT_REQUIRES_PYTHON: '>=3.8'
-          if: matrix.os == 'macos-13'
-          MACOSX_DEPLOYMENT_TARGET: '10.12'
         with:
           output-dir: wheelhouse
 
