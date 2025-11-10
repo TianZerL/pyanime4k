@@ -23,8 +23,8 @@ build-verbosity = 1
 
 [tool.cibuildwheel.macos]
 before-all = [
-   "brew install opencl-icd-loader opencl-headers opencl-clhpp-headers",
-   "export CMAKE_PREFIX_PATH="/usr/local/opt/opencl-clhpp-headers",
+    "brew install opencl-icd-loader opencl-headers opencl-clhpp-headers",
+    "export CMAKE_PREFIX_PATH=\"/usr/local/opt/opencl-clhpp-headers\"",
 ]
 
 [tool.cibuildwheel.linux]
