@@ -36,13 +36,13 @@ pyanime4k.print_device_list()
 import pyanime4k
 
 # with OpenCL acceleration, if possible
-processor_name = "opencl"
+processor_type = "opencl"
 
 # upscale a single image
-pyanime4k.upscale_images("image1.png", processor_name = processor_name)
+pyanime4k.upscale_images("image1.png", processor_type = processor_type)
 
 # upscale a list of images
-pyanime4k.upscale_images(["image1.png", "image2.png"], processor_name = processor_name)
+pyanime4k.upscale_images(["image1.png", "image2.png"], processor_type = processor_type)
 ```
 ## Manual Upscaling
 ```python
@@ -50,9 +50,9 @@ import pyanime4k
 
 # Create a processor
 processor = pyanime4k.Processor(
-    processor_name="cpu",
-    device_id=0,
-    model_name="acnet-hdn0"
+    processor_type="cpu",
+    device=0,
+    model="acnet-hdn0"
 )
 # Print processor info
 print(processor)
@@ -70,9 +70,9 @@ import cv2, pyanime4k
 img = cv2.imread("image.png")
 
 processor = pyanime4k.Processor(
-    processor_name="cpu",
-    device_id=0,
-    model_name="acnet-hdn0"
+    processor_type="cpu",
+    device=0,
+    model="acnet-hdn0"
 )
 
 # opencv load image as BGR, but we need an RGB image
@@ -93,9 +93,9 @@ import numpy, pyanime4k
 img = Image.open("D:/temp/p1.png")
 
 processor = pyanime4k.Processor(
-    processor_name="cpu",
-    device_id=0,
-    model_name="acnet-hdn0"
+    processor_type="cpu",
+    device=0,
+    model="acnet-hdn0"
 )
 
 # We need a numpy array

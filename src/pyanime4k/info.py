@@ -1,4 +1,4 @@
-from . import pyac
+from .pyac import pyac
 
 def print_model_list():
     for name, description in zip(pyac.specs.ModelNameList, pyac.specs.ModelDescriptionList):

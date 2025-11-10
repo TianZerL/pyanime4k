@@ -1,1 +1,1 @@
-from .pyac import *
+from .pyac.core import *
