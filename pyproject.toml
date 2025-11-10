@@ -24,8 +24,8 @@ build-verbosity = 1
 [tool.cibuildwheel.macos]
 environment = "MACOSX_DEPLOYMENT_TARGET=10.15"
 before-all = [
-    "mkdir -p ~/local/include/CL",
-    "curl -o ~/local/include/CL/opencl.hpp https://github.com/KhronosGroup/OpenCL-CLHPP/raw/refs/heads/main/include/CL/opencl.hpp",
+    "sudo mkdir -p /usr/local/include/CL",
+    "sudo curl -o /usr/local/include/CL/opencl.hpp https://github.com/KhronosGroup/OpenCL-CLHPP/raw/refs/heads/main/include/CL/opencl.hpp",
 ]
 
 [tool.cibuildwheel.linux]
