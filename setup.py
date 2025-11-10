@@ -23,7 +23,7 @@ def main():
     pyac_cmake_args = ["-DAC_CORE_WITH_EIGEN3=ON", "-DAC_BUILD_BINDING_PYTHON=ON", "-DAC_BUILD_CLI=OFF"]
 
     if platform.system() != 'Darwin':
-        pyac_cmake_args.append("-DAC_CORE_WITH_OPENCL=ON"), 
+        pyac_cmake_args.append("-DAC_CORE_WITH_OPENCL=ON")
 
     if platform.system() == 'Windows':
         pyac_cmake_args.append("-DAC_ENABLE_STATIC_CRT=ON")
