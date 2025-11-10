@@ -1,5 +1,6 @@
 import os
 from pathlib import Path
+from setuptools import find_packages
 from skbuild import setup
 
 def is_python_extension(file_path):
@@ -28,7 +29,7 @@ def main():
         pyac_cmake_args.append("-DAC_CORE_WITH_CUDA=ON")
 
     setup(
-        packages=["pyanime4k", "pyanime4k.pyac", "pyanime4k.pyac.pyac"],
+        packages=find_packages(where='src'),
         package_dir={"pyanime4k": "src/pyanime4k", "pyanime4k.pyac": "src/pyanime4k/pyac", "pyanime4k.pyac.pyac": "src/pyanime4k/pyac/pyac"},
         cmake_args=pyac_cmake_args,
         cmake_source_dir="src/Anime4KCPP",
