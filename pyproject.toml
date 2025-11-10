@@ -22,14 +22,8 @@ skip = ["pp*", "*win32", "*i686", "*musllinux*"]
 build-verbosity = 1
 
 [tool.cibuildwheel.macos]
-before-all = [
-    "brew install opencl-icd-loader opencl-headers opencl-clhpp-headers",
-    "export CMAKE_PREFIX_PATH=\"/usr/local/opt/opencl-icd-loader\"",
-    "export CPPFLAGS=\"-I/usr/local/opt/opencl-headers/include\"",
-    "export CMAKE_PREFIX_PATH=\"/usr/local/opt/opencl-headers\"",
-    "export CPPFLAGS=\"-I/usr/local/opt/opencl-clhpp-headers/include\"",
-    "export CMAKE_PREFIX_PATH=\"/usr/local/opt/opencl-clhpp-headers\"",
-]
+environment = "CPPFLAGS='-I/usr/local/opt/opencl-clhpp-headers/include' MACOSX_DEPLOYMENT_TARGET=10.15"
+before-all = "brew install opencl-icd-loader opencl-headers opencl-clhpp-headers"
 
 [tool.cibuildwheel.linux]
 before-all = "yum install -y ocl-icd ocl-icd-devel"
