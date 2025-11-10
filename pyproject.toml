@@ -19,10 +19,10 @@ classifiers = [
 
 [tool.cibuildwheel]
 skip = ["pp*", "*win32", "*i686", "*musllinux*"]
-build-verbosity = 2
+build-verbosity = 1
 
 [tool.cibuildwheel.macos]
 repair-wheel-command = "delocate-wheel --library-path lib --require-archs {delocate_archs} -w {dest_dir} -v {wheel}"
 
 [tool.cibuildwheel.linux]
-repair-wheel-command = "auditwheel repair --lib-sdir lib64 -w {dest_dir} {wheel}"
+repair-wheel-command = "export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:./lib64 auditwheel repair -w {dest_dir} {wheel}"
