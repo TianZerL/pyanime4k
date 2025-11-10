@@ -21,5 +21,8 @@ classifiers = [
 skip = ["pp*", "*win32", "*i686", "*musllinux*"]
 build-verbosity = 1
 
+[tool.cibuildwheel.macos]
+environment = "MACOSX_DEPLOYMENT_TARGET=10.15"
+
 [tool.cibuildwheel.linux]
 before-all = "yum install -y ocl-icd ocl-icd-devel"

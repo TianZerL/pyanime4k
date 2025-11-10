@@ -20,7 +20,7 @@ def check_cuda():
     return False
 
 def main():
-    pyac_cmake_args = ["-DAC_CORE_WITH_OPENCL=ON", "-DAC_CORE_WITH_EIGEN3=ON", "-DAC_BUILD_BINDING_PYTHON=ON", "-DAC_BUILD_CLI=OFF", "-DCMAKE_INSTALL_LIBDIR=src/pyanime4k/pyac"]
+    pyac_cmake_args = ["-DAC_CORE_WITH_OPENCL=ON", "-DAC_CORE_WITH_EIGEN3=ON", "-DAC_BUILD_BINDING_PYTHON=ON", "-DAC_BUILD_CLI=OFF", "-DCMAKE_INSTALL_LIBDIR=pyac"]
 
     if os.name == 'nt':
         pyac_cmake_args.append("-DAC_ENABLE_STATIC_CRT=ON")
