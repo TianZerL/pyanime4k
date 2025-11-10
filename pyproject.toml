@@ -25,4 +25,7 @@ build-verbosity = 1
 environment = "MACOSX_DEPLOYMENT_TARGET=10.15"
 
 [tool.cibuildwheel.linux]
-before-all = "yum install -y ocl-icd ocl-icd-devel"
+before-all = [
+    "yum install -y epel-release",
+    "yum install -y ocl-icd ocl-icd-devel opencl-headers",
+]

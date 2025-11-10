@@ -3,11 +3,13 @@ from pathlib import Path
 from setuptools import find_namespace_packages
 from skbuild import setup
 
-def is_python_extension(file_path):
+def is_pyac_python_extension(file_path):
+    file_path = Path(file_path)
     exts = [".dll", ".pyd", ".dylib", ".so"]
-    for ext in exts:
-        if ext in file_path:
-            return True
+    if "pyac" in file_path.name:
+        for ext in exts:
+            if ext in file_path.name:
+                return True
     return False
 
 def check_cuda():
@@ -37,7 +39,7 @@ def main():
         cmake_args=pyac_cmake_args,
         cmake_source_dir="src/Anime4KCPP",
         cmake_install_dir="src/pyanime4k",
-        cmake_process_manifest_hook = lambda manifest : list(filter(lambda name: is_python_extension(name), manifest))
+        cmake_process_manifest_hook = lambda manifest : list(filter(lambda name: is_pyac_python_extension(name), manifest))
     )
 
 if __name__ == "__main__":
