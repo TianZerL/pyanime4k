@@ -1,6 +1,6 @@
 import os
 from pathlib import Path
-from setuptools import find_packages
+from setuptools import find_namespace_packages
 from skbuild import setup
 
 def is_python_extension(file_path):
@@ -29,9 +29,8 @@ def main():
         pyac_cmake_args.append("-DAC_CORE_WITH_CUDA=ON")
 
     setup(
-        packages=find_packages(where='src'),
+        packages=find_namespace_packages(where='src'),
         package_dir={'': 'src'},
-        package_data={'pyanime4k.pyac': ['**/*.pyi']},
         cmake_args=pyac_cmake_args,
         cmake_source_dir="src/Anime4KCPP",
         cmake_process_manifest_hook = lambda manifest : list(filter(lambda name: is_python_extension(name), manifest))
